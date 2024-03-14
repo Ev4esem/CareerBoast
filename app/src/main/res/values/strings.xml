@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">CareerBoast</string>
+    <string name="create_account">Create a new /n account</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="register">Register</string>
+    <string name="interview">InterView</string>
+    <string name="mentors">Mentors</string>
+    <string name="internships">Internships</string>
+    <string name="log_out">Log our</string>
+    <string name="internships_and_jobs">Internships and Jobs</string>
+    <string name="apply_now">Apply Now</string>
+    <string name="rating">Rating</string>
+    <string name="location">Location</string>
+    <string name="compensation">Compensation</string>
+    <string name="Review">Review</string>
+    <string name="internship_details">Internship details</string>
+    <string name="job_type">Job type</string>
+    <string name="qualifications">Qualifications</string>
+    <string name="start_date">Start date</string>
+    <string name="submit">Submit</string>
+    <string name="choose_interview">Choose interview type</string>
+    <string name="correct">correct</string>
+    <string name="incorrect">incorrect</string>
+    <string name="recommended_study">You\'re almost there! Here are some recommended study materials:</string>
+    <string name="jobs">Jobs</string>
+    <string name="favorite">Favorite</string>
+    <string name="apply">Apply</string>
+    <string name="save">Save</string>
+    <string name="experience">Experience</string>
+    <string name="feedback">Feedback</string>
+    <string name="price">Price</string>
+    <string name="message">Message</string>
+    <string name="specialties">Specialties</string>
+    <string name="contact">Contact</string>
+    <string name="social_media">Social Media</string>
+    <string name="pricing">Pricing</string>
+    <string name="reviews">Reviews</string>
+
+    //Content Description
+    <string name="action_back">Close screen</string>
+
+</resources>
