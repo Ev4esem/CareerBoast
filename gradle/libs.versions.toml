@@ -10,6 +10,7 @@ activityCompose = "1.7.0"
 composeBom = "2023.08.00"
 firebaseBom = "32.7.4"
 googleVersion = "4.4.1"
+jetbrainsKotlinJvm = "1.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -35,3 +36,4 @@ firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "googleVersion" }
+jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
