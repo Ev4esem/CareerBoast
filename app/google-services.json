@@ -12,7 +12,20 @@
           "package_name": "com.example.careerboast"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1091019658935-8f82gnb0ilkeraepapn6olsti6c7k31b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.careerboast",
+            "certificate_hash": "59f7515ab7bc214db88825975b016a9963b646db"
+          }
+        },
+        {
+          "client_id": "1091019658935-7d95jnr1e2u599ink29moeh5h68ie0gv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyB_vXr0cpuHalKExZAe1U9-5gOUUuKx2nE"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1091019658935-7d95jnr1e2u599ink29moeh5h68ie0gv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

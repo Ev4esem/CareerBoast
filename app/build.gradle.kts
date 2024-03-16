@@ -65,7 +65,8 @@ dependencies {
 
     //Firebase
     implementation(platform(libs.firebase.bom))
-    implementation(platform(libs.firebase.analytics))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
