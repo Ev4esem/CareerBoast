@@ -1,13 +1,30 @@
 <resources>
+
+    <!-- Common -->
     <string name="app_name">CareerBoast</string>
-    <string name="create_account">Create a new /n account</string>
-    <string name="username">Username</string>
+    <string name="email">Email</string>
     <string name="password">Password</string>
-    <string name="register">Register</string>
+    <string name="apply">Apply</string>
+    <string name="save">Save</string>
+    <string name="favorite">Favorite</string>
+    <string name="generic_error">Something wrong happened. Please try again.</string>
+    <string name="email_error">Please insert a valid email.</string>
+    <string name="cancel">Cancel</string>
+    <string name="try_again">Try again</string>
+    <string name="ok">OK</string>
+
+    <!-- Navigation drawer -->
     <string name="interview">InterView</string>
     <string name="mentors">Mentors</string>
     <string name="internships">Internships</string>
-    <string name="log_out">Log our</string>
+    <string name="log_out">Log out</string>
+
+    <!-- Log in -->
+    <string name="register">Register</string>
+    <string name="create_account">Create a new /n account</string>
+    <string name="empty_password_error">Password cannot be empty.</string>
+
+    <!-- Jobs -->
     <string name="internships_and_jobs">Internships and Jobs</string>
     <string name="apply_now">Apply Now</string>
     <string name="rating">Rating</string>
@@ -18,15 +35,13 @@
     <string name="job_type">Job type</string>
     <string name="qualifications">Qualifications</string>
     <string name="start_date">Start date</string>
+    <string name="jobs">Jobs</string>
+
+    <!-- Interviews -->
     <string name="submit">Submit</string>
     <string name="choose_interview">Choose interview type</string>
-    <string name="correct">correct</string>
-    <string name="incorrect">incorrect</string>
-    <string name="recommended_study">You\'re almost there! Here are some recommended study materials:</string>
-    <string name="jobs">Jobs</string>
-    <string name="favorite">Favorite</string>
-    <string name="apply">Apply</string>
-    <string name="save">Save</string>
+
+    <!-- Mentors -->
     <string name="experience">Experience</string>
     <string name="feedback">Feedback</string>
     <string name="price">Price</string>
@@ -36,6 +51,12 @@
     <string name="social_media">Social Media</string>
     <string name="pricing">Pricing</string>
     <string name="reviews">Reviews</string>
+
+    <!-- Feedback -->
+
+    <string name="correct">correct</string>
+    <string name="incorrect">incorrect</string>
+    <string name="recommended_study">You\'re almost there! Here are some recommended study materials:</string>
 
     //Content Description
     <string name="action_back">Close screen</string>
