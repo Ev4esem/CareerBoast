@@ -5,5 +5,16 @@ plugins {
     alias(libs.plugins.googleServices) apply false
     alias(libs.plugins.jetbrainsKotlinJvm) apply false
     alias(libs.plugins.firebaseCrashlytics) apply false
+}
+
+buildscript {
+
+
+    dependencies {
+
+        classpath(libs.kotlin.gradle)
+        classpath (libs.google.dagger)
+        classpath(libs.kotlin.serialization)
+    }
 
 }

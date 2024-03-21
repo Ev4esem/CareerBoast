@@ -1,4 +1,4 @@
-package com.example.careerboast.view.login
+package com.example.careerboast.view.screens.login
 
 data class LoginUiState(
     val email : String = "",

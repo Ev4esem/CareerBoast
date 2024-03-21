@@ -12,6 +12,8 @@
     <string name="cancel">Cancel</string>
     <string name="try_again">Try again</string>
     <string name="ok">OK</string>
+    <string name="no_connection">Нет подключения к интернету</string>
+
 
     <!-- Navigation drawer -->
     <string name="interview">InterView</string>
@@ -21,8 +23,8 @@
 
     <!-- Log in -->
     <string name="register">Register</string>
-    <string name="create_account">Create a new /n account</string>
     <string name="empty_password_error">Password cannot be empty.</string>
+    <string name="sign_up">Sign up</string>
 
     <!-- Jobs -->
     <string name="internships_and_jobs">Internships and Jobs</string>

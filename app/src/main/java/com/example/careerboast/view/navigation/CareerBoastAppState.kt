@@ -1,4 +1,4 @@
-package com.example.careerboast
+package com.example.careerboast.view.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable

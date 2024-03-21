@@ -1,10 +1,13 @@
 package com.example.careerboast.domain.repositories
 
+import com.example.careerboast.domain.model.specialities.Speciality
+import kotlinx.coroutines.flow.Flow
+
 interface SpecialitiesRepository {
 
-    fun getSpecialitiesList() : List<String>
+    suspend fun getSpecialitiesList() : Flow<List<Speciality>>
 
-    fun getSpecialityById(speciality : Int) : String
+    suspend fun getSpecialityById(specialityId : String) : Flow<Speciality>
 
 
 

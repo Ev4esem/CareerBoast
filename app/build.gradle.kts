@@ -3,7 +3,10 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.googleServices)
     alias(libs.plugins.firebaseCrashlytics)
-
+    id("kotlin-kapt")
+    id ("dagger.hilt.android.plugin")
+    id("kotlin-parcelize")
+    id("kotlinx-serialization")
 }
 
 android {
@@ -56,6 +59,7 @@ dependencies {
 
     // Kotlin
     implementation(libs.androidx.core.ktx)
+    implementation(libs.kotlin.serialization)
 
     // Compose
     implementation(libs.androidx.activity.compose)
@@ -65,18 +69,35 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
+    // Coil
+    implementation(libs.coil.compose)
+
+    //Retrofit
+
+    implementation(libs.squareup.retrofit2)
+    implementation(libs.squareup.retrofit2.converter.gson)
+    implementation(libs.code.gson)
+    implementation(libs.squareup.retrofit2.converter.serialization)
+
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
 
     //Navigation
     implementation(libs.androidx.navigation.compose)
 
+    //Hilt
+
+    implementation (libs.com.google.dagger.hilt.android)
+    kapt (libs.com.google.dagger.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
 
     //Firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.crashlytics)
+    implementation(libs.firebase.firestore)
 
     // Testing
     androidTestImplementation(libs.androidx.junit)

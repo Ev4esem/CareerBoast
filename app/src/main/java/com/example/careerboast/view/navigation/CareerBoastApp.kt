@@ -1,4 +1,4 @@
-package com.example.careerboast
+package com.example.careerboast.view.navigation
 
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -30,7 +30,8 @@ fun CareerBoastApp(
 
                CareerBoastNavHost(
                    modifier = modifier.padding(it),
-                   navController = appState.navController
+                   navController = appState.navController,
+                   appState = appState
                )
 
             }
