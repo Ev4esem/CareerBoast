@@ -13,10 +13,13 @@
     <string name="try_again">Try again</string>
     <string name="ok">OK</string>
     <string name="no_connection">Нет подключения к интернету</string>
+    <string name="career">Career</string>
+    <string name="boast">Boast</string>
+    <string name="menu">Menu</string>
 
 
     <!-- Navigation drawer -->
-    <string name="interview">InterView</string>
+    <string name="interview">Interview</string>
     <string name="mentors">Mentors</string>
     <string name="internships">Internships</string>
     <string name="log_out">Log out</string>

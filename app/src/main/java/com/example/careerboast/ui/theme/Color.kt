@@ -9,6 +9,8 @@ val GhostlyWhite = Color(0xFFF7FAFC)
 val White = Color(0xFFFFFFFF)
 val DarkBlue = Color(0xFF4F7396)
 val Blue = Color(0xFF1A5CE5)
+val Red = Color(0xFFF58383)
+
 val Black = Color(0xFF000000)
 val LavenderElement = Color(0xFFE8EDF2)
 val LavenderText = Color(0xFFE8EBF2)

@@ -1,7 +1,7 @@
 package com.example.careerboast.di.speciality
 
-import com.example.careerboast.data.repositories.SpecialityRepositoryImpl
-import com.example.careerboast.domain.repositories.SpecialitiesRepository
+import com.example.careerboast.data.repositories.speciality.SpecialityRepositoryImpl
+import com.example.careerboast.domain.repositories.speciality.SpecialitiesRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

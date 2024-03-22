@@ -1,11 +1,13 @@
-package com.example.careerboast.data.repositories
+package com.example.careerboast.data.repositories.login
 
 import com.example.careerboast.domain.model.login.UserAccount
-import com.example.careerboast.domain.repositories.AccountService
+import com.example.careerboast.domain.repositories.login.AccountService
+import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -37,8 +39,9 @@ class AccountServiceImpl @Inject constructor (
             awaitClose { auth.removeAuthStateListener(listener) }
         }
 
-    override suspend fun register(email : String, password : String) {
-        auth.createUserWithEmailAndPassword(email,password).await()
+    override suspend fun register(email : String, password : String) : Flow<AuthResult> = flow {
+        val authUser = auth.createUserWithEmailAndPassword(email,password).await()
+        emit(authUser)
     }
 
 

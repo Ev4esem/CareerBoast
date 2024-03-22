@@ -14,7 +14,7 @@ fun CareerBoastNavHost(
 
     val startDestination = MAIN_ROUTE_PATTERN
 
-    NavHost(
+     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
@@ -22,6 +22,5 @@ fun CareerBoastNavHost(
             screens(navController, appState)
         }
     }
-
 
 }

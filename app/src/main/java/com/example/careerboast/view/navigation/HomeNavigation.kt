@@ -11,7 +11,7 @@ fun NavGraphBuilder.main(
 ) {
     navigation(
         route = MAIN_ROUTE_PATTERN,
-        startDestination = Screen.LOGIN_SCREEN.route
+        startDestination = Screen.SPECIALITY_SCREEN.route
     ) {
         nestedGraphs()
     }

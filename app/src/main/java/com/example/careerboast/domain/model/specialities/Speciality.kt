@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 @Keep
 @Serializable
 data class Speciality(
-    val id : String,
-    val imageUrl : String,
-    val title : String,
-    val interviews : List<Interview>
+    val id : Int = 0,
+    val imageUrl : String = "",
+    val title : String = "",
+    val interviews : List<Interview> = emptyList()
 )

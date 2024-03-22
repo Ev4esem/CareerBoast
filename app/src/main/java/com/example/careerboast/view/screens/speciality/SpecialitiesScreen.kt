@@ -1,5 +1,6 @@
 package com.example.careerboast.view.screens.speciality
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +17,11 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +40,7 @@ import com.example.careerboast.common.composable.CareerErrorScreen
 import com.example.careerboast.common.composable.CareerLoadingScreen
 import com.example.careerboast.domain.model.specialities.Speciality
 import com.example.careerboast.ui.theme.White
+import com.example.careerboast.view.navigation.CareerBoastAppState
 import com.example.careerboast.view.navigation.Screen
 
 
@@ -41,7 +48,7 @@ import com.example.careerboast.view.navigation.Screen
 fun SpecialitiesScreen(
     uiState : SpecialityUiState,
     onEvent : (SpecialitiesEvent) -> Unit,
-    navController : NavController
+    navController : CareerBoastAppState
 ) {
 
     if (!uiState.error.isNullOrBlank()) {
@@ -68,14 +75,15 @@ fun SpecialitiesScreen(
 fun SpecialitiesList(
     specialityItems : List<Speciality>,
     onEvent : (SpecialitiesEvent) -> Unit,
-    navController : NavController
+    navController : CareerBoastAppState
 ) {
 
     val listState = rememberLazyListState()
+    var selectedSpecialityId by remember { mutableStateOf<Int?>(null) }
 
     LazyColumn(
         state = listState,
-
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(
             items = specialityItems,
@@ -85,12 +93,18 @@ fun SpecialitiesList(
                 title = speciality.title,
                 image = speciality.imageUrl,
                 onItemClick = {
-                    onEvent(SpecialitiesEvent.SelectedSpeciality(speciality.id))
-                    navController.navigate(Screen.INTERVIEWS_SCREEN.route)
+                    selectedSpecialityId = speciality.id
+                    Log.d("InterviewListId", "$speciality")
                 })
         }
     }
 
+    LaunchedEffect(selectedSpecialityId) {
+        selectedSpecialityId?.let { specialityId ->
+            onEvent(SpecialitiesEvent.SelectedSpeciality(specialityId))
+            navController.navigate(Screen.INTERVIEWS_SCREEN.route)
+        }
+    }
 }
 
 @Composable

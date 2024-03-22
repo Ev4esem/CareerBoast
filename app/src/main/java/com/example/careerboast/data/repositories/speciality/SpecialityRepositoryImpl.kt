@@ -1,8 +1,8 @@
-package com.example.careerboast.data.repositories
+package com.example.careerboast.data.repositories.speciality
 
 import com.example.careerboast.di.IoDispatcher
 import com.example.careerboast.domain.model.specialities.Speciality
-import com.example.careerboast.domain.repositories.SpecialitiesRepository
+import com.example.careerboast.domain.repositories.speciality.SpecialitiesRepository
 import com.example.careerboast.utils.SPECIALITIES
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -28,9 +28,9 @@ class SpecialityRepositoryImpl @Inject constructor(
     }.flowOn(ioDispatcher)
 
     // todo
-    override suspend fun getSpecialityById(specialityId : String) : Flow<Speciality> = flow {
+    override suspend fun getSpecialityById(specialityId : Int) : Flow<Speciality> = flow {
 
-        val specialityDocument = db.collection(SPECIALITIES).document(specialityId)
+        val specialityDocument = db.collection(SPECIALITIES).document(specialityId.toString())
         val documentSnapshot: DocumentSnapshot = specialityDocument.get().await()
         val speciality = documentSnapshot.toObject<Speciality>()
         speciality?.let { emit(it) }

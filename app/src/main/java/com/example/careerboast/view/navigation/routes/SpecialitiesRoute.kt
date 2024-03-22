@@ -9,6 +9,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.careerboast.utils.ObserveEffect
+import com.example.careerboast.view.navigation.CareerBoastAppState
+import com.example.careerboast.view.screens.interview.InterviewListScreen
 import com.example.careerboast.view.screens.speciality.SpecialitiesEffect
 import com.example.careerboast.view.screens.speciality.SpecialitiesEvent
 import com.example.careerboast.view.screens.speciality.SpecialitiesScreen
@@ -16,7 +18,7 @@ import com.example.careerboast.view.screens.speciality.SpecialityViewModel
 
 @Composable
 fun SpecialitiesRoute(
-    navController : NavController,
+    navController : CareerBoastAppState,
 ) {
 
     val context = LocalContext.current
@@ -31,21 +33,9 @@ fun SpecialitiesRoute(
         }
     }
 
-    BackHandler(
-        uiState.selectSpeciality != null
-    ) {
-        viewModel.obtainEvent(
-            SpecialitiesEvent.ClearSelectedSpeciality
-        )
-    }
-
     SpecialitiesScreen(
         uiState = uiState,
         onEvent = viewModel::obtainEvent,
         navController = navController)
-
-    uiState.selectSpeciality?.let { selectedSpeciality ->
-
-    }
 
 }

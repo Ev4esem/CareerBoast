@@ -1,6 +1,7 @@
-package com.example.careerboast.domain.repositories
+package com.example.careerboast.domain.repositories.login
 
 import com.example.careerboast.domain.model.login.UserAccount
+import com.google.firebase.auth.AuthResult
 import kotlinx.coroutines.flow.Flow
 
 interface AccountService {
@@ -11,7 +12,7 @@ interface AccountService {
 
     val currentUser: Flow<UserAccount>
 
-    suspend fun register(email: String, password: String)
+    suspend fun register(email: String, password: String) : Flow<AuthResult>
 
 
     suspend fun signOut()

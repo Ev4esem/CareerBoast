@@ -22,6 +22,10 @@ fun Modifier.spacer(): Modifier {
     return this.fillMaxWidth().padding(12.dp)
 }
 
+fun Modifier.basisPadding(): Modifier {
+    return this.padding(start = 15.dp, end = 15.dp)
+}
+
 fun Modifier.smallSpacer(): Modifier {
     return this.fillMaxWidth().height(8.dp)
 }

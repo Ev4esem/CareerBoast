@@ -39,7 +39,7 @@ class SpecialityViewModel @Inject constructor (
             is SpecialitiesEvent.ClearSelectedSpeciality -> {
                 clearSelectedSpeciality()
             }
-            is SpecialitiesEvent.RefreshProductDetail -> {
+            is SpecialitiesEvent.RefreshInterviewList -> {
                 getSpecialityById(event.id)
             }
         }
@@ -79,7 +79,7 @@ class SpecialityViewModel @Inject constructor (
                     }
                 }
             )
-
+            sendEffect(SpecialitiesEffect.ShowToast(message = _specialitiesUiState.value.error.toString()))
         }
     }
 
@@ -95,7 +95,7 @@ class SpecialityViewModel @Inject constructor (
         }
     }
 
-    fun getSpecialityById(id : String) {
+    fun getSpecialityById(id : Int) {
         viewModelScope.launch {
             getSpecialityByIdUseCase(
                 specialityId = id

@@ -3,13 +3,17 @@ package com.example.careerboast.common.composable
 import androidx.annotation.StringRes
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
+import com.example.careerboast.R
 import com.example.careerboast.ui.theme.Blue
 import com.example.careerboast.ui.theme.White
 
@@ -35,4 +39,24 @@ fun BasicButton(
             color = colorText
             )
     }
+}
+
+@Composable
+fun BackButtonBasic(
+    onBackClick : () -> Unit,
+    modifier : Modifier = Modifier
+) {
+
+    IconButton(
+        onClick = { onBackClick() },
+        modifier = modifier
+    ) {
+
+        Icon(
+            painter = painterResource(id = R.drawable.action_back),
+            contentDescription = stringResource(R.string.action_back)
+        )
+
+    }
+
 }
