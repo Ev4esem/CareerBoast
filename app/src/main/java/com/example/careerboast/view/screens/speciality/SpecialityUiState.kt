@@ -8,5 +8,5 @@ data class SpecialityUiState(
     val interviewsLoading : Boolean = false,
     val error : String? = null,
     val errorInterviews : String? = null,
-    val selectSpeciality : Speciality? = null
+    var selectSpeciality : Speciality? = null
 )

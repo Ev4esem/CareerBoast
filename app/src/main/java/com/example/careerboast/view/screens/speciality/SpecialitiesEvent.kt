@@ -5,10 +5,10 @@ sealed interface SpecialitiesEvent {
     object RefreshData : SpecialitiesEvent
 
     data class SelectedSpeciality(
-        val id : Int
+        val id : String
     ) : SpecialitiesEvent
 
-    data class RefreshInterviewList(val id : Int) : SpecialitiesEvent
+    data class RefreshInterviewList(val id : String) : SpecialitiesEvent
 
     object ClearSelectedSpeciality : SpecialitiesEvent
 

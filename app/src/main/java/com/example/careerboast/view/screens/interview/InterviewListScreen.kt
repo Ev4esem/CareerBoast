@@ -108,6 +108,7 @@ fun InterviewList(
             items = interviewList,
             key = { interview -> interview.id }
         ) { interview ->
+            Log.d("InterviewListId", "${interview.id}")
 
             InterviewItem(
                 level = interview.level,

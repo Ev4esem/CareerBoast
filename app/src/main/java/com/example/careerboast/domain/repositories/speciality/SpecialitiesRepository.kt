@@ -7,7 +7,7 @@ interface SpecialitiesRepository {
 
     suspend fun getSpecialitiesList() : Flow<List<Speciality>>
 
-    suspend fun getSpecialityById(specialityId : Int) : Flow<Speciality>
+    suspend fun getSpecialityById(specialityId : String) : Flow<Speciality>
 
 
 

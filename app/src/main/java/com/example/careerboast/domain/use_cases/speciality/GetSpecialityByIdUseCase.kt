@@ -9,7 +9,7 @@ class GetSpecialityByIdUseCase @Inject constructor(
     private val specialitiesRepository : SpecialitiesRepository
 ) {
 
-    suspend operator fun invoke(specialityId : Int) : Flow<Speciality> {
+    suspend operator fun invoke(specialityId : String) : Flow<Speciality> {
         return specialitiesRepository.getSpecialityById(specialityId)
     }
 

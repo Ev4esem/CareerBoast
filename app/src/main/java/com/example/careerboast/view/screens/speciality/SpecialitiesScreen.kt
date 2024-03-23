@@ -79,7 +79,7 @@ fun SpecialitiesList(
 ) {
 
     val listState = rememberLazyListState()
-    var selectedSpecialityId by remember { mutableStateOf<Int?>(null) }
+    //var selectedSpecialityId by remember { mutableStateOf<String?>(null) }
 
     LazyColumn(
         state = listState,
@@ -93,18 +93,19 @@ fun SpecialitiesList(
                 title = speciality.title,
                 image = speciality.imageUrl,
                 onItemClick = {
-                    selectedSpecialityId = speciality.id
-                    Log.d("InterviewListId", "$speciality")
-                })
+                    onEvent(SpecialitiesEvent.SelectedSpeciality(speciality.id))
+                    Log.d("SpecialityId","${speciality.id} in SpecialitiesScreen")
+                    navController.navigate(Screen.INTERVIEWS_SCREEN.route)
+                }
+            )
         }
     }
 
-    LaunchedEffect(selectedSpecialityId) {
-        selectedSpecialityId?.let { specialityId ->
-            onEvent(SpecialitiesEvent.SelectedSpeciality(specialityId))
-            navController.navigate(Screen.INTERVIEWS_SCREEN.route)
-        }
-    }
+//    LaunchedEffect(selectedSpecialityId) {
+//        selectedSpecialityId?.let { specialityId ->
+//
+//        }
+//    }
 }
 
 @Composable

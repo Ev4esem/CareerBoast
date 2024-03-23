@@ -7,6 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.careerboast.view.screens.interview.InterviewListEffect
 import com.google.gson.JsonParseException
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers
@@ -78,7 +79,7 @@ suspend fun <T> Flow<T>.collectAsResult(
 
 
 @Composable
-fun <T> ObserveEffect(flow : Flow<T>, onEvent: (T) -> Unit) {
+fun <T> ObserveEffect(flow : Flow<T>, onEvent : (T) -> Unit) {
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(flow, lifecycleOwner.lifecycle) {
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

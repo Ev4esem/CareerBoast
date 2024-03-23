@@ -1,5 +1,6 @@
 package com.example.careerboast.data.repositories.speciality
 
+import android.util.Log
 import com.example.careerboast.di.IoDispatcher
 import com.example.careerboast.domain.model.specialities.Speciality
 import com.example.careerboast.domain.repositories.speciality.SpecialitiesRepository
@@ -28,10 +29,15 @@ class SpecialityRepositoryImpl @Inject constructor(
     }.flowOn(ioDispatcher)
 
     // todo
-    override suspend fun getSpecialityById(specialityId : Int) : Flow<Speciality> = flow {
+    override suspend fun getSpecialityById(specialityId : String) : Flow<Speciality> = flow {
 
-        val specialityDocument = db.collection(SPECIALITIES).document(specialityId.toString())
+        val specialityDocument = db.collection(SPECIALITIES).document(specialityId)
+        Log.d("SpecialityId", specialityId)
+        Log.d("SpecialityId", "$specialityDocument")
+
         val documentSnapshot: DocumentSnapshot = specialityDocument.get().await()
+        Log.d("SpecialityId", "$specialityDocument")
+
         val speciality = documentSnapshot.toObject<Speciality>()
         speciality?.let { emit(it) }
     }.flowOn(ioDispatcher)

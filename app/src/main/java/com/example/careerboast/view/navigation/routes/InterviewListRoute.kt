@@ -1,7 +1,9 @@
 package com.example.careerboast.view.navigation.routes
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,7 +37,11 @@ fun InterviewListRoute(
 
     }
 
+    Log.d("InterviewListId", "${uiStateSpeciality.selectSpeciality} in InterviewListRoute")
+
     uiStateSpeciality.selectSpeciality?.let {  speciality ->
+        Log.d("InterviewListId", "$speciality in InterviewListRoute")
+
         InterviewListScreen(
             interviewList = speciality.interviews,
             onEvent = viewModelInterviewList::obtainEvent,
@@ -46,6 +52,9 @@ fun InterviewListRoute(
                 viewModelSpeciality.obtainEvent(SpecialitiesEvent.RefreshInterviewList(speciality.id))
             }
         )
+    } ?: run {
+        Log.d("SpecialityId", "NULL")
+
     }
 
 }

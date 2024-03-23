@@ -1,5 +1,6 @@
 package com.example.careerboast.view.screens.interview
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.careerboast.domain.repositories.LogService
 import com.example.careerboast.domain.use_cases.interview_list.GetInterviewByIdUseCase
@@ -8,6 +9,7 @@ import com.example.careerboast.utils.CareerBoastViewModel
 import com.example.careerboast.utils.EffectHandler
 import com.example.careerboast.utils.EventHandler
 import com.example.careerboast.utils.collectAsResult
+import com.example.careerboast.view.screens.speciality.SpecialitiesEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -102,6 +104,7 @@ class InterviewListViewModel @Inject constructor(
                 interviewId = id
             ).collectAsResult(
                 onSuccess = { specialityDetail ->
+                    Log.d("SelectSpeciality", "$specialityDetail")
                     _interviewListUiState.update { currentState ->
                         currentState.copy(
                             selectInterview = specialityDetail,
@@ -127,6 +130,7 @@ class InterviewListViewModel @Inject constructor(
                     }
                 }
             )
+            sendEffect(InterviewListEffect.ShowToast(message = _interviewListUiState.value.errorList.toString()))
         }
     }
 

@@ -1,5 +1,6 @@
 package com.example.careerboast.view.screens.speciality
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.careerboast.domain.repositories.LogService
 import com.example.careerboast.domain.use_cases.speciality.GetSpecialityByIdUseCase
@@ -79,7 +80,6 @@ class SpecialityViewModel @Inject constructor (
                     }
                 }
             )
-            sendEffect(SpecialitiesEffect.ShowToast(message = _specialitiesUiState.value.error.toString()))
         }
     }
 
@@ -95,12 +95,13 @@ class SpecialityViewModel @Inject constructor (
         }
     }
 
-    fun getSpecialityById(id : Int) {
+    private fun getSpecialityById(id : String) {
         viewModelScope.launch {
             getSpecialityByIdUseCase(
                 specialityId = id
             ).collectAsResult(
                 onSuccess = { specialityDetail ->
+                    Log.d("SelectSpeciality", "$specialityDetail")
                     _specialitiesUiState.update { currentState ->
                         currentState.copy(
                             selectSpeciality = specialityDetail,
