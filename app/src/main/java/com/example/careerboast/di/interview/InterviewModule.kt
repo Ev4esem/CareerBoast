@@ -1,7 +1,7 @@
 package com.example.careerboast.di.interview
 
-import com.example.careerboast.data.repositories.interview_list.InterviewListRepositoryImpl
-import com.example.careerboast.domain.repositories.interviews.InterviewListRepository
+import com.example.careerboast.data.repositories.interview.InterviewRepositoryImpl
+import com.example.careerboast.domain.repositories.interview.InterviewRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -12,8 +12,8 @@ import dagger.hilt.components.SingletonComponent
 interface InterviewModule {
 
     @Binds
-    fun interviewListRepositoryImpl_to_InterviewListPepository(
-        interviewListRepositoryImpl : InterviewListRepositoryImpl
-    ) : InterviewListRepository
+    fun interviewRepositoryImpl_to_InterviewRepository(
+        interviewRepositoryImpl : InterviewRepositoryImpl
+    ) : InterviewRepository
 
 }

@@ -1,5 +1,6 @@
 package com.example.careerboast.view.navigation
 
+import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -9,7 +10,8 @@ import androidx.navigation.compose.NavHost
 fun CareerBoastNavHost(
     modifier : Modifier = Modifier,
     navController : NavHostController,
-    appState : CareerBoastAppState
+    appState : CareerBoastAppState,
+    drawerState : DrawerState
 ) {
 
     val startDestination = MAIN_ROUTE_PATTERN
@@ -19,7 +21,7 @@ fun CareerBoastNavHost(
         startDestination = startDestination
     ) {
         main {
-            screens(navController, appState)
+            screens(navController, appState, drawerState)
         }
     }
 

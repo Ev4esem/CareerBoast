@@ -1,4 +1,4 @@
-package com.example.careerboast.view.screens.interview
+package com.example.careerboast.view.screens.interview_list
 
 import android.util.Log
 import androidx.compose.foundation.clickable
@@ -37,7 +37,6 @@ import com.example.careerboast.view.navigation.CareerBoastAppState
 import com.example.careerboast.view.navigation.Screen
 
 
-// todo Доделать навигацию
 @Composable
 fun InterviewListScreen(
     interviewList : List<Interview>,
@@ -45,7 +44,6 @@ fun InterviewListScreen(
     appState : CareerBoastAppState,
     error : String?,
     loading : Boolean,
-    onClickRetry : () -> Unit
 ) {
 
     Column {
@@ -67,15 +65,15 @@ fun InterviewListScreen(
         if (!error.isNullOrBlank()) {
             CareerErrorScreen(
                 errorText = error,
-                onClickRetry = onClickRetry
+                onClickRetry = {
+                    onEvent(InterviewListEvent.RefreshData)
+                }
             )
         } else if (loading) {
             CareerLoadingScreen()
         } else {
-
             InterviewList(
                 interviewList = interviewList,
-                onEvent = onEvent,
                 navController = appState
             )
         }
@@ -92,7 +90,6 @@ fun InterviewListScreen(
 @Composable
 fun InterviewList(
     interviewList : List<Interview>,
-    onEvent : (InterviewListEvent) -> Unit,
     navController : CareerBoastAppState,
     modifier : Modifier = Modifier
 ) {
@@ -118,7 +115,6 @@ fun InterviewList(
                 time = interview.time,
                 title = interview.title,
                 onItemClick = {
-                    onEvent(InterviewListEvent.SelectedInterview(interview.id))
                     navController.navigate(Screen.INTERVIEW_SCREEN.route)
                     Log.d("InterviewListId", "${interview.id}")
                 }

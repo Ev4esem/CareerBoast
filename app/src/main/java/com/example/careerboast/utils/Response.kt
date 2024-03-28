@@ -7,7 +7,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.careerboast.view.screens.interview.InterviewListEffect
 import com.google.gson.JsonParseException
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers

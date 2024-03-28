@@ -7,9 +7,9 @@ interface InterviewListRepository {
 
     suspend fun getInterviewList() : Flow<List<Interview>>
 
-    suspend fun getInterviewById(
-        interviewId : Int
-    ) : Flow<Interview>
+
+
+    suspend fun getSpecialityById(specialityId : String) : Flow<List<Interview>>
 
 
 }

@@ -3,6 +3,7 @@ package com.example.careerboast.common.ext
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
@@ -19,7 +20,7 @@ fun Modifier.card(): Modifier {
 }
 
 fun Modifier.spacer(): Modifier {
-    return this.fillMaxWidth().padding(12.dp)
+    return this.width(16.dp)
 }
 
 fun Modifier.basisPadding(): Modifier {

@@ -1,5 +1,6 @@
 package com.example.careerboast.view.screens.speciality
 
+import com.example.careerboast.domain.model.interviews.Interview
 import com.example.careerboast.domain.model.specialities.Speciality
 
 data class SpecialityUiState(
@@ -8,5 +9,5 @@ data class SpecialityUiState(
     val interviewsLoading : Boolean = false,
     val error : String? = null,
     val errorInterviews : String? = null,
-    var selectSpeciality : Speciality? = null
+    var selectSpeciality : List<Interview>? = null
 )

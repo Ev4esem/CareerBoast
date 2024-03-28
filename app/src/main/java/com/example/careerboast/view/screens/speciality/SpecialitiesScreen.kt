@@ -15,13 +15,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.os.bundleOf
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -40,50 +38,59 @@ import com.example.careerboast.common.composable.CareerErrorScreen
 import com.example.careerboast.common.composable.CareerLoadingScreen
 import com.example.careerboast.domain.model.specialities.Speciality
 import com.example.careerboast.ui.theme.White
+import com.example.careerboast.utils.SPECIALITY_ID
 import com.example.careerboast.view.navigation.CareerBoastAppState
 import com.example.careerboast.view.navigation.Screen
+import com.example.careerboast.view.navigation.drawer.AppBar
 
 
 @Composable
 fun SpecialitiesScreen(
     uiState : SpecialityUiState,
     onEvent : (SpecialitiesEvent) -> Unit,
-    navController : CareerBoastAppState
+    onNavigation : (String) -> Unit,
+    drawerState : DrawerState
 ) {
 
-    if (!uiState.error.isNullOrBlank()) {
-        CareerErrorScreen(
-            errorText = uiState.error.toString(),
-            onClickRetry = {
-                onEvent(SpecialitiesEvent.RefreshData)
-            }
-        )
-    } else if (uiState.specialityLoading) {
-        CareerLoadingScreen()
-    } else {
-        SpecialitiesList(
-            specialityItems = uiState.specialityList,
-            onEvent = onEvent,
-            navController = navController)
+    Scaffold(
+        topBar = {
+            AppBar(drawerState = drawerState)
+        }
+    ) {
+        if (! uiState.error.isNullOrBlank()) {
+            CareerErrorScreen(
+                errorText = uiState.error.toString(),
+                onClickRetry = {
+                    onEvent(SpecialitiesEvent.RefreshData)
+                }
+            )
+        } else if (uiState.specialityLoading) {
+            CareerLoadingScreen()
+        } else {
+            SpecialitiesList(
+                modifier = Modifier.fillMaxSize().padding(it),
+                specialityItems = uiState.specialityList,
+                onNavigation = onNavigation
+            )
 
+        }
     }
-
 
 }
 
 @Composable
 fun SpecialitiesList(
+    modifier : Modifier = Modifier,
     specialityItems : List<Speciality>,
-    onEvent : (SpecialitiesEvent) -> Unit,
-    navController : CareerBoastAppState
+    onNavigation : (String) -> Unit
 ) {
 
     val listState = rememberLazyListState()
-    //var selectedSpecialityId by remember { mutableStateOf<String?>(null) }
 
     LazyColumn(
         state = listState,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        modifier = modifier
     ) {
         items(
             items = specialityItems,
@@ -93,20 +100,14 @@ fun SpecialitiesList(
                 title = speciality.title,
                 image = speciality.imageUrl,
                 onItemClick = {
-                    onEvent(SpecialitiesEvent.SelectedSpeciality(speciality.id))
-                    Log.d("SpecialityId","${speciality.id} in SpecialitiesScreen")
-                    navController.navigate(Screen.INTERVIEWS_SCREEN.route)
+                    onNavigation(speciality.id)
                 }
             )
+            Log.d("SpecialityId", "${speciality.id} in SpecialitiesScreen")
         }
     }
-
-//    LaunchedEffect(selectedSpecialityId) {
-//        selectedSpecialityId?.let { specialityId ->
-//
-//        }
-//    }
 }
+
 
 @Composable
 fun SpecialityItem(

@@ -1,4 +1,4 @@
-package com.example.careerboast.view.screens.interview
+package com.example.careerboast.view.screens.interview_list
 
 sealed interface InterviewListEffect {
 

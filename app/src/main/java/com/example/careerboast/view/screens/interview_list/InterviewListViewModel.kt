@@ -1,15 +1,16 @@
-package com.example.careerboast.view.screens.interview
+package com.example.careerboast.view.screens.interview_list
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.careerboast.domain.repositories.LogService
-import com.example.careerboast.domain.use_cases.interview_list.GetInterviewByIdUseCase
 import com.example.careerboast.domain.use_cases.interview_list.GetInterviewListUseCase
+import com.example.careerboast.domain.use_cases.interview_list.GetSpecialityByIdUseCase
 import com.example.careerboast.utils.CareerBoastViewModel
 import com.example.careerboast.utils.EffectHandler
 import com.example.careerboast.utils.EventHandler
+import com.example.careerboast.utils.SPECIALITY_ID
 import com.example.careerboast.utils.collectAsResult
-import com.example.careerboast.view.screens.speciality.SpecialitiesEffect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -22,9 +23,12 @@ import javax.inject.Inject
 @HiltViewModel
 class InterviewListViewModel @Inject constructor(
     private val getInterviewListUseCase : GetInterviewListUseCase,
-    private val getInterviewByIdUseCase : GetInterviewByIdUseCase,
+    private val getSpecialityByIdUseCase : GetSpecialityByIdUseCase,
+    savedStateHandle : SavedStateHandle,
     logService : LogService
 ) : CareerBoastViewModel(logService), EffectHandler<InterviewListEffect>, EventHandler<InterviewListEvent> {
+
+    private val specialityId : String = checkNotNull(savedStateHandle[SPECIALITY_ID])
 
     private var _interviewListUiState = MutableStateFlow(InterviewListUiState())
     val interviewListUiState  = _interviewListUiState.asStateFlow()
@@ -36,13 +40,10 @@ class InterviewListViewModel @Inject constructor(
             InterviewListEvent.RefreshData -> {
                 getInterviewList()
             }
-            is InterviewListEvent.SelectedInterview -> {
-                getSpecialityById(event.id)
-            }
             is InterviewListEvent.ClearSelectedSpeciality -> {
                 clearSelectedSpeciality()
             }
-            is InterviewListEvent.RefreshProductDetail -> {
+            is InterviewListEvent.RefreshInterviewList -> {
                 getSpecialityById(event.id)
             }
         }
@@ -50,6 +51,7 @@ class InterviewListViewModel @Inject constructor(
 
     init {
         getInterviewList()
+        getSpecialityById(specialityId)
     }
 
     private fun getInterviewList() {
@@ -90,42 +92,43 @@ class InterviewListViewModel @Inject constructor(
         _interviewListUiState.update { currentState ->
 
             currentState.copy(
-                interviewLoading = false,
-                errorInterview = null,
-                selectInterview = null
+                interviewListLoading = false,
+                errorList = null,
+                selectSpeciality = null
             )
 
         }
     }
 
-    fun getSpecialityById(id : Int) {
+
+    private fun getSpecialityById(id : String) {
         viewModelScope.launch {
-            getInterviewByIdUseCase(
-                interviewId = id
+            getSpecialityByIdUseCase(
+                specialityId = id
             ).collectAsResult(
                 onSuccess = { specialityDetail ->
                     Log.d("SelectSpeciality", "$specialityDetail")
                     _interviewListUiState.update { currentState ->
                         currentState.copy(
-                            selectInterview = specialityDetail,
-                            interviewLoading = false,
-                            errorInterview = null
+                            selectSpeciality = specialityDetail,
+                            interviewListLoading = false,
+                            errorList = null
                         )
                     }
                 },
                 onError = { ex, message ->
                     _interviewListUiState.update { currentState ->
                         currentState.copy(
-                            interviewLoading = false,
-                            errorInterview = message
+                            interviewListLoading = false,
+                            errorList = message
                         )
                     }
                 },
                 onLoading = {
                     _interviewListUiState.update { currentState ->
                         currentState.copy(
-                            interviewLoading = true,
-                            errorInterview = null
+                            interviewListLoading = true,
+                            errorList = null
                         )
                     }
                 }
@@ -133,7 +136,6 @@ class InterviewListViewModel @Inject constructor(
             sendEffect(InterviewListEffect.ShowToast(message = _interviewListUiState.value.errorList.toString()))
         }
     }
-
 
 
 }

@@ -29,6 +29,10 @@ class CareerBoastAppState(
         navController.navigate(route) { launchSingleTop = true }
     }
 
+    fun navigateBasic(route : String) {
+        navController.navigate(route)
+    }
+
     fun navigateAndPopUp(route : String, popUp : String) {
         navController.navigate(route) {
             launchSingleTop = true

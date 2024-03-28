@@ -1,9 +1,8 @@
 package com.example.careerboast.view.screens.speciality
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.example.careerboast.domain.repositories.LogService
-import com.example.careerboast.domain.use_cases.speciality.GetSpecialityByIdUseCase
+import com.example.careerboast.domain.use_cases.interview_list.GetSpecialityByIdUseCase
 import com.example.careerboast.domain.use_cases.speciality.GetSpecialityListUseCase
 import com.example.careerboast.utils.CareerBoastViewModel
 import com.example.careerboast.utils.EffectHandler
@@ -21,7 +20,6 @@ import javax.inject.Inject
 @HiltViewModel
 class SpecialityViewModel @Inject constructor (
     private val getSpecialityListUseCase : GetSpecialityListUseCase,
-    private val getSpecialityByIdUseCase : GetSpecialityByIdUseCase,
     logService : LogService
 ) : CareerBoastViewModel(logService), EffectHandler<SpecialitiesEffect>, EventHandler<SpecialitiesEvent> {
 
@@ -33,15 +31,6 @@ class SpecialityViewModel @Inject constructor (
         when(event) {
             SpecialitiesEvent.RefreshData -> {
                 getSpecialities()
-            }
-            is SpecialitiesEvent.SelectedSpeciality -> {
-                getSpecialityById(event.id)
-            }
-            is SpecialitiesEvent.ClearSelectedSpeciality -> {
-                clearSelectedSpeciality()
-            }
-            is SpecialitiesEvent.RefreshInterviewList -> {
-                getSpecialityById(event.id)
             }
         }
     }
@@ -89,46 +78,13 @@ class SpecialityViewModel @Inject constructor (
             currentState.copy(
                 interviewsLoading = false,
                 errorInterviews = null,
-                selectSpeciality = null
+                selectSpeciality = listOf()
             )
 
         }
     }
 
-    private fun getSpecialityById(id : String) {
-        viewModelScope.launch {
-            getSpecialityByIdUseCase(
-                specialityId = id
-            ).collectAsResult(
-                onSuccess = { specialityDetail ->
-                    Log.d("SelectSpeciality", "$specialityDetail")
-                    _specialitiesUiState.update { currentState ->
-                        currentState.copy(
-                            selectSpeciality = specialityDetail,
-                            interviewsLoading = false,
-                            errorInterviews = null
-                        )
-                    }
-                },
-                onError = { ex, message ->
-                    _specialitiesUiState.update { currentState ->
-                        currentState.copy(
-                            interviewsLoading = false,
-                            errorInterviews = message
-                        )
-                    }
-                },
-                onLoading = {
-                    _specialitiesUiState.update { currentState ->
-                        currentState.copy(
-                            interviewsLoading = true,
-                            errorInterviews = null
-                        )
-                    }
-                }
-            )
-        }
-    }
+
 
 
 }

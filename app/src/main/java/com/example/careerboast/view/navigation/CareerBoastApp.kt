@@ -1,120 +1,111 @@
 package com.example.careerboast.view.navigation
 
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.NavigationDrawerItem
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.example.careerboast.ui.theme.Black
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.careerboast.R
 import com.example.careerboast.ui.theme.CareerBoastTheme
-import com.example.careerboast.view.navigation.drawer.AppBar
-import com.example.careerboast.view.navigation.drawer.items
-import kotlinx.coroutines.launch
+import com.example.careerboast.view.navigation.drawer.AppDrawerContent
+import com.example.careerboast.view.navigation.drawer.MenuItem
+import com.example.careerboast.view.screens.login.LoginViewModel
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CareerBoastApp(
     modifier : Modifier = Modifier,
     appState : CareerBoastAppState = rememberCareerBoastAppState(),
+    viewModel : LoginViewModel = hiltViewModel()
 ) {
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+
 
     CareerBoastTheme {
 
         Surface(color = MaterialTheme.colorScheme.background) {
 
-            val scope = rememberCoroutineScope()
-            var selectedItemIndex by rememberSaveable {
-                mutableIntStateOf(0)
-            }
-
             ModalNavigationDrawer(
-                drawerContent = {
-                    ModalDrawerSheet {
-                        Spacer(modifier = modifier.height(16.dp))
-                        items.forEachIndexed { index, menuItem ->
-                            NavigationDrawerItem(
-                                label = {
-                                    Text(
-                                        text = stringResource(menuItem.title),
-                                        color = Black,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.weight(1f),
-                                        fontSize = 15.sp
-                                    )
-                                },
-                                selected = index == selectedItemIndex,
-                                onClick = {
-                                    selectedItemIndex = index
-                                    scope.launch {
-                                        drawerState.close()
-                                    }
-                                },
-                                icon = {
-                                    Icon(
-                                        painter = painterResource(id = menuItem.icon),
-                                        contentDescription = stringResource(id = menuItem.contentDescription)
-                                    )
-                                }
-
-                            )
-                        }
-                    }
-                },
                 drawerState = drawerState,
-                modifier = modifier
-                    .padding(NavigationDrawerItemDefaults.ItemPadding)
-            ) {
-                Scaffold(
-                    topBar = {
-                        AppBar {
-                            scope.launch {
-                                drawerState.open()
+                drawerContent = {
+                    AppDrawerContent(
+                        drawerState = drawerState,
+                        menuItem = DrawerParams.drawerButtons,
+                        defaultPick = Screen.SPECIALITY_SCREEN
+                    ) { onUserPickedOption ->
+                        when (onUserPickedOption) {
+                            Screen.SPECIALITY_SCREEN -> {
+                                appState.navigate(onUserPickedOption.route)
+                            }
+
+                            Screen.JOBS_TO_FAVORITE_SCREEN -> {
+                                appState.navigate(onUserPickedOption.route)
+                            }
+
+                            Screen.MENTORS_SCREEN -> {
+                                appState.navigate(onUserPickedOption.route)
+                            }
+
+                            else -> {
+                                viewModel.onSignOut {
+                                    appState.clearAndNavigate(it)
+                                }
                             }
                         }
-                    },
+
+
+                    }
+                }
+            ) {
+                Scaffold(
                     modifier = modifier
                         .navigationBarsPadding(),
                 ) {
                     CareerBoastNavHost(
                         modifier = modifier.padding(it),
                         navController = appState.navController,
-                        appState = appState
+                        appState = appState,
+                        drawerState = drawerState
                     )
-
                 }
             }
         }
-
     }
+}
 
+object DrawerParams {
+    val drawerButtons = arrayListOf(
+        MenuItem(
+            drawerOption = Screen.SPECIALITY_SCREEN,
+            contentDescription = R.string.specialties,
+            title = R.string.specialties,
+            icon = R.drawable.interview,
+        ),
+        MenuItem(
+            drawerOption = Screen.JOBS_TO_FAVORITE_SCREEN,
+            contentDescription = R.string.internships,
+            title = R.string.internships,
+            icon = R.drawable.interships,
+        ),
+        MenuItem(
+            drawerOption = Screen.MENTORS_SCREEN,
+            contentDescription = R.string.mentors,
+            title = R.string.mentors,
+            icon = R.drawable.mentors,
+        ),
+        MenuItem(
+            drawerOption = Screen.LOGIN_SCREEN,
+            contentDescription = R.string.log_out,
+            title = R.string.log_out,
+            icon = R.drawable.log_out,
+        )
+    )
 }

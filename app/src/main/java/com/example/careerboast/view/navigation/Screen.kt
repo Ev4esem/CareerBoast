@@ -14,6 +14,7 @@ sealed class Screen(
     object FEEDBACK_SCREEN : Screen("FeedbackScreen")
     object DETAILS_MENTOR_SCREEN : Screen("DetailsMentorScreen")
     object DETAILS_JOB_SCREEN : Screen("FeedbackScreen")
-    object FAVORITE_SCREEN : Screen("FavoriteScreen")
+    object FAVORITE_JOB_SCREEN : Screen("FavoriteScreen")
+    object JOBS_TO_FAVORITE_SCREEN : Screen("jobsToFavoriteScreen")
 
 }
