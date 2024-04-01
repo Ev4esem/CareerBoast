@@ -5,9 +5,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface InterviewListRepository {
 
-    suspend fun getInterviewList() : Flow<List<Interview>>
-
-
 
     suspend fun getSpecialityById(specialityId : String) : Flow<List<Interview>>
 

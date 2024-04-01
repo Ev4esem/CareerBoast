@@ -44,7 +44,8 @@ fun BasicButton(
 @Composable
 fun BackButtonBasic(
     onBackClick : () -> Unit,
-    modifier : Modifier = Modifier
+    modifier : Modifier = Modifier,
+    icon : Int
 ) {
 
     IconButton(
@@ -53,7 +54,7 @@ fun BackButtonBasic(
     ) {
 
         Icon(
-            painter = painterResource(id = R.drawable.action_back),
+            painter = painterResource(id = icon),
             contentDescription = stringResource(R.string.action_back)
         )
 

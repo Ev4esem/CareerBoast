@@ -17,6 +17,7 @@ val Lexend = FontFamily(
     Font(R.font.lexend_light, FontWeight.Light),
     Font(R.font.lexend_medium, FontWeight.Medium),
     Font(R.font.lexend_semibold, FontWeight.SemiBold),
+    Font(R.font.lexend_extrabold, FontWeight.ExtraBold),
 
     )
 
@@ -31,10 +32,25 @@ val Typography = Typography(
         fontWeight = FontWeight.W300,
         fontSize = 14.sp
     ),
+    bodySmall = TextStyle(
+        fontFamily = Lexend,
+        fontWeight = FontWeight.W300,
+        fontSize = 12.sp
+    ),
     titleLarge = TextStyle(
         fontFamily = Lexend,
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.ExtraBold,
         fontSize = 28.sp,
+    ),
+    titleMedium = TextStyle(
+        fontFamily = Lexend,
+        fontWeight = FontWeight.Bold,
+        fontSize = 22.sp,
+    ),
+    labelLarge = TextStyle(
+        fontFamily = Lexend,
+        fontWeight = FontWeight.Black,
+        fontSize = 24.sp,
     ),
     labelSmall = TextStyle(
         fontFamily = Lexend,

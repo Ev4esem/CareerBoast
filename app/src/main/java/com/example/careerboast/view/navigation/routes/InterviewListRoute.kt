@@ -6,8 +6,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import com.example.careerboast.utils.ObserveEffect
 import com.example.careerboast.view.navigation.CareerBoastAppState
+import com.example.careerboast.view.navigation.buildInterviewRoute
 import com.example.careerboast.view.screens.interview_list.InterviewListEffect
 import com.example.careerboast.view.screens.interview_list.InterviewListScreen
 import com.example.careerboast.view.screens.interview_list.InterviewListViewModel
@@ -23,25 +25,21 @@ fun InterviewListRoute(
 
     ObserveEffect(flow = viewModelInterviewList.effectFlow) { effect ->
 
-        when(effect) {
+        when (effect) {
             is InterviewListEffect.ShowToast -> {
-                Toast.makeText(context,effect.message, Toast.LENGTH_LONG).show()
+                Toast.makeText(context, effect.message, Toast.LENGTH_LONG).show()
             }
         }
 
     }
 
-
-    uiStateInterviewList.selectSpeciality?.let { interviews ->
-        InterviewListScreen(
-            interviewList = interviews,
-            onEvent = viewModelInterviewList::obtainEvent,
-            appState = appState,
-            error = uiStateInterviewList.errorList,
-            loading = uiStateInterviewList.interviewListLoading,
-        )
-    }
-
-
+    InterviewListScreen(
+        onEvent = viewModelInterviewList::obtainEvent,
+        appState = appState,
+        uiState = uiStateInterviewList,
+        onNavigation = { interviewId, time ->
+            appState.navigate(buildInterviewRoute(interviewId, time))
+        }
+    )
 
 }

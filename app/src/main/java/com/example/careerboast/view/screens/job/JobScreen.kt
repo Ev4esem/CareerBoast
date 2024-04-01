@@ -1,5 +1,7 @@
 package com.example.careerboast.view.screens.job
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,17 +18,22 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -43,8 +50,8 @@ import com.example.careerboast.R
 import com.example.careerboast.common.TabItem
 import com.example.careerboast.common.composable.CareerErrorScreen
 import com.example.careerboast.common.composable.CareerLoadingScreen
-import com.example.careerboast.common.composable.TabLayout
 import com.example.careerboast.common.ext.basisPadding
+import com.example.careerboast.common.ext.spacer
 import com.example.careerboast.domain.model.jobs.Job
 import com.example.careerboast.ui.theme.Black
 import com.example.careerboast.ui.theme.Blue
@@ -55,12 +62,12 @@ import com.example.careerboast.ui.theme.White
 import com.example.careerboast.view.navigation.CareerBoastAppState
 import com.example.careerboast.view.navigation.Screen
 import com.example.careerboast.view.navigation.drawer.AppBar
-import com.example.careerboast.view.screens.speciality.SpecialitiesEvent
-import com.example.careerboast.view.screens.speciality.SpecialitiesList
+import com.example.careerboast.view.screens.job.favoritejob.FavoriteJobScreen
+import com.example.careerboast.view.screens.job.favoritejob.FavoriteUiState
 
 @Composable
 fun JobScreen(
-    appState : CareerBoastAppState,
+    onNavigation : (String) -> Unit,
     uiState : JobUiState,
     onEvent : (JobEvent) -> Unit
 ) {
@@ -78,7 +85,7 @@ fun JobScreen(
         JobList(
             jobs = uiState.jobs,
             onEvent = onEvent,
-            appState = appState
+            onNavigation = onNavigation
         )
 
     }
@@ -86,42 +93,18 @@ fun JobScreen(
 
 }
 
-@Composable
-fun FavoriteJobScreen(
-    appState : CareerBoastAppState,
-    uiState : JobUiState,
-    onEvent : (JobEvent) -> Unit
-) {
-    if (! uiState.error.isNullOrBlank()) {
-        CareerErrorScreen(
-            errorText = uiState.error.toString(),
-            onClickRetry = {
-                onEvent(JobEvent.RefreshData)
-            }
-        )
-    } else if (uiState.loading) {
-        CareerLoadingScreen()
-    } else {
-        JobFavoriteList(
-            list = uiState.favoriteList,
-            onEvent = onEvent,
-            appState = appState
-        )
-
-    }
-}
 
 @Composable
 fun Jobs_to_FavoriteJobs(
-    appState : CareerBoastAppState,
     drawerState : DrawerState,
     uiState : JobUiState,
-    onEvent : (JobEvent) -> Unit
+    favoriteUiState : FavoriteUiState,
+    onEvent : (JobEvent) -> Unit,
+    onNavigation : (String) -> Unit
 ) {
 
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
 
-    val tabList = listOf(
+    val tabItems = listOf(
         TabItem(
             title = R.string.jobs,
             selected = White,
@@ -146,43 +129,145 @@ fun Jobs_to_FavoriteJobs(
         }
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it)
         ) {
 
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
             Text(
                 text = stringResource(id = R.string.internships_and_jobs),
                 style = MaterialTheme.typography.titleLarge,
                 color = Black,
-                modifier = Modifier.padding(top = 8.dp)
+                modifier = Modifier.basisPadding()
             )
-            TabLayout(tabItems = tabList, appState = appState)
 
-            when (selectedTabIndex) {
-                0 -> {
-                    JobScreen(appState = appState, uiState = uiState, onEvent = onEvent)
-                }
-
-                1 -> {
-                    FavoriteJobScreen(appState = appState, uiState = uiState, onEvent = onEvent)
-                }
-            }
+            TabLayoutJob(
+                tabItems = tabItems,
+                uiState = uiState,
+                onEvent = onEvent,
+                favoriteUiState = favoriteUiState,
+                onNavigation = onNavigation
+            )
 
         }
     }
 
 }
 
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun TabLayoutJob(
+    tabItems : List<TabItem>,
+    uiState : JobUiState,
+    favoriteUiState : FavoriteUiState,
+    onEvent : (JobEvent) -> Unit,
+    onNavigation : (String) -> Unit
+) {
+    // todo Вынести в общий компонент и переиспользовать
+    Column {
+
+        var selectedTabIndex by remember {
+            mutableIntStateOf(0)
+        }
+
+        val pagerState = rememberPagerState {
+            tabItems.size
+        }
+
+        LaunchedEffect(selectedTabIndex) {
+            pagerState.animateScrollToPage(selectedTabIndex)
+        }
+
+        LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress) {
+
+            if (! pagerState.isScrollInProgress) {
+                selectedTabIndex = pagerState.currentPage
+            }
+        }
+
+        TabRow(
+            selectedTabIndex = selectedTabIndex,
+            containerColor = LightGreyBackground,
+            indicator = {
+                Box(
+                    modifier = Modifier
+                        .height(0.dp)
+                        .width(0.dp)
+                )
+            },
+            modifier = Modifier
+                .padding(5.dp)
+                .clip(RoundedCornerShape(10.dp))
+        ) {
+
+            tabItems.forEachIndexed { index, item ->
+                Tab(
+                    selected = index == selectedTabIndex,
+                    onClick = {
+                        selectedTabIndex = index
+                    },
+                    modifier = Modifier
+                        .height(48.dp)
+                        .padding(horizontal = 16.dp)
+                        .background(
+                            color = if (selectedTabIndex == index) item.selected else item.unSelected,
+                            shape = RoundedCornerShape(8.dp)
+                        )
+                        .padding(8.dp),
+                    text = {
+                        Text(
+                            text = stringResource(item.title),
+                            color = if (selectedTabIndex == index) item.textSelected else item.textUnSelected,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                    }
+                )
+            }
+
+        }
+        Spacer(modifier = Modifier.spacer())
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) { index ->
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                when (index) {
+                    0 -> {
+                        JobScreen(
+                            uiState = uiState,
+                            onEvent = onEvent,
+                            onNavigation = onNavigation
+                        )
+                    }
+
+                    1 -> {
+                        FavoriteJobScreen(
+                            uiState = favoriteUiState,
+                            onEvent = onEvent,
+                            onNavigation = onNavigation
+                        )
+                    }
+                }
+            }
+        }
+
+
+    }
+}
+
 @Composable
 fun JobList(
     jobs : List<Job>,
     onEvent : (JobEvent) -> Unit,
-    appState : CareerBoastAppState
+    onNavigation : (String) -> Unit
 ) {
     val listState = rememberLazyListState()
 
@@ -191,7 +276,7 @@ fun JobList(
     ) {
         items(
             items = jobs,
-            key = { job -> job.id }
+            key = Job::id
         ) { job ->
 
             JobItem(
@@ -200,8 +285,7 @@ fun JobList(
                 status = job.status,
                 subTitle = job.subTitle,
                 onItemClick = {
-                    onEvent(JobEvent.SelectedJob(job.id))
-                    appState.navigate(Screen.DETAILS_JOB_SCREEN.route)
+                    onNavigation(job.id)
                 },
                 onClickFavorite = {
                     onEvent(JobEvent.ChangeFavorite(job))
@@ -218,7 +302,7 @@ fun JobList(
 fun JobFavoriteList(
     list : List<Job>,
     onEvent : (JobEvent) -> Unit,
-    appState : CareerBoastAppState
+    onNavigation : (String) -> Unit
 ) {
     val listState = rememberLazyListState()
 
@@ -236,8 +320,7 @@ fun JobFavoriteList(
                 status = job.status,
                 subTitle = job.subTitle,
                 onItemClick = {
-                    onEvent(JobEvent.SelectedJob(job.id))
-                    appState.navigate(Screen.DETAILS_JOB_SCREEN.route)
+                    onNavigation(job.id)
                 },
                 onClickFavorite = {
                     onEvent(JobEvent.ChangeFavorite(job))
@@ -316,7 +399,7 @@ fun JobItem(
                 onClick = { onClickFavorite() }
             ) {
                 Icon(
-                    painter = if (isFavorite) {
+                    painter = if (! isFavorite) {
                         painterResource(id = R.drawable.favorite)
                     } else {
                         painterResource(id = R.drawable.favorite_fill)

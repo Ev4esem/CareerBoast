@@ -39,11 +39,10 @@ import com.example.careerboast.view.navigation.Screen
 
 @Composable
 fun InterviewListScreen(
-    interviewList : List<Interview>,
+    uiState : InterviewListUiState,
     onEvent : (InterviewListEvent) -> Unit,
     appState : CareerBoastAppState,
-    error : String?,
-    loading : Boolean,
+    onNavigation : (String, String) -> Unit,
 ) {
 
     Column {
@@ -52,8 +51,8 @@ fun InterviewListScreen(
                 appState.popUp()
             },
             modifier = Modifier
-                .fillMaxWidth()
-                .basisPadding()
+                .basisPadding(),
+            icon = R.drawable.action_back
         )
         Text(
             text = stringResource(id = R.string.choose_interview),
@@ -62,19 +61,19 @@ fun InterviewListScreen(
             modifier = Modifier.basisPadding(),
             color = Black
         )
-        if (!error.isNullOrBlank()) {
+        if (!uiState.errorList.isNullOrBlank()) {
             CareerErrorScreen(
-                errorText = error,
+                errorText = uiState.errorList,
                 onClickRetry = {
                     onEvent(InterviewListEvent.RefreshData)
                 }
             )
-        } else if (loading) {
+        } else if (uiState.interviewListLoading) {
             CareerLoadingScreen()
         } else {
             InterviewList(
-                interviewList = interviewList,
-                navController = appState
+                interviewList = uiState.selectSpeciality,
+                onNavigation = onNavigation
             )
         }
 
@@ -90,8 +89,8 @@ fun InterviewListScreen(
 @Composable
 fun InterviewList(
     interviewList : List<Interview>,
-    navController : CareerBoastAppState,
-    modifier : Modifier = Modifier
+    modifier : Modifier = Modifier,
+    onNavigation : (String, String) -> Unit
 ) {
 
     val listState = rememberLazyListState()
@@ -115,8 +114,7 @@ fun InterviewList(
                 time = interview.time,
                 title = interview.title,
                 onItemClick = {
-                    navController.navigate(Screen.INTERVIEW_SCREEN.route)
-                    Log.d("InterviewListId", "${interview.id}")
+                    onNavigation(interview.id,interview.totalTime)
                 }
             )
 

@@ -16,6 +16,14 @@
     <string name="career">Career</string>
     <string name="boast">Boast</string>
     <string name="menu">Menu</string>
+    <string name="yes">Yes</string>
+    <string name="exit_with_interview">Exiting the interview</string>
+    <string name="question_finished_inter">Are you sure you want to finish the interview?</string>
+    <string name="continue_dialog">Continue</string>
+    <string name="dialog_message">Unfortunately, time has run out!</string>
+    <string name="dialog_title">Failure</string>
+    <string name="congratulations">Congratulations!</string>
+    <string name="dialog_answered_questions">You\'ve answered all the questions</string>
 
 
     <!-- Navigation drawer -->

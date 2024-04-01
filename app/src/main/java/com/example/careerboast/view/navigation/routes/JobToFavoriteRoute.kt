@@ -9,19 +9,27 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.careerboast.utils.ObserveEffect
 import com.example.careerboast.view.navigation.CareerBoastAppState
+import com.example.careerboast.view.navigation.buildJobDetailRoute
 import com.example.careerboast.view.screens.job.JobEffect
 import com.example.careerboast.view.screens.job.JobViewModel
 import com.example.careerboast.view.screens.job.Jobs_to_FavoriteJobs
+import com.example.careerboast.view.screens.job.favoritejob.FavoriteJobViewModel
 
 @Composable
 fun JobToFavoriteRoute(
-    appState : CareerBoastAppState,
-    drawerState : DrawerState
+    drawerState : DrawerState,
+    appState : CareerBoastAppState
 ) {
 
     val context = LocalContext.current
     val viewModel : JobViewModel = hiltViewModel()
+    val favoriteViewmodel : FavoriteJobViewModel = hiltViewModel()
+
+
     val uiState by viewModel.jobUiState.collectAsStateWithLifecycle()
+
+    val favoriteUiState by favoriteViewmodel.jobUiState.collectAsStateWithLifecycle()
+
 
     ObserveEffect(viewModel.effectFlow) { effect ->
         when (effect) {
@@ -33,10 +41,13 @@ fun JobToFavoriteRoute(
 
 
     Jobs_to_FavoriteJobs(
-        appState = appState,
         drawerState = drawerState,
         uiState = uiState,
-        onEvent = viewModel::obtainEvent
+        onEvent = viewModel::obtainEvent,
+        favoriteUiState = favoriteUiState,
+        onNavigation = { jobId ->
+            appState.navigate(buildJobDetailRoute(jobId))
+        }
     )
 
 }

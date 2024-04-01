@@ -1,16 +1,17 @@
-package com.example.careerboast.view.screens.job
+package com.example.careerboast.view.screens.job.favoritejob
 
 import androidx.lifecycle.viewModelScope
 import com.example.careerboast.domain.model.jobs.Job
 import com.example.careerboast.domain.repositories.LogService
-import com.example.careerboast.domain.use_cases.job.GetJobByIdUseCase
 import com.example.careerboast.domain.use_cases.job.GetJobFavoriteListUseCase
-import com.example.careerboast.domain.use_cases.job.GetJobsListUseCase
 import com.example.careerboast.domain.use_cases.job.SetFavoriteJobUseCase
 import com.example.careerboast.utils.CareerBoastViewModel
 import com.example.careerboast.utils.EffectHandler
 import com.example.careerboast.utils.EventHandler
 import com.example.careerboast.utils.collectAsResult
+import com.example.careerboast.view.screens.job.JobEffect
+import com.example.careerboast.view.screens.job.JobEvent
+import com.example.careerboast.view.screens.job.JobUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -21,15 +22,13 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class JobViewModel @Inject constructor(
-    private val getJobsListUseCase : GetJobsListUseCase,
-    private val getJobByIdUseCase : GetJobByIdUseCase,
+class FavoriteJobViewModel @Inject constructor(
     private val setFavoriteJobUseCase : SetFavoriteJobUseCase,
     private val getJobFavoriteListUseCase : GetJobFavoriteListUseCase,
     logService : LogService
-) : CareerBoastViewModel(logService), EventHandler<JobEvent>, EffectHandler<JobEffect> {
+): CareerBoastViewModel(logService), EventHandler<JobEvent>, EffectHandler<JobEffect> {
 
-    private var _jobUiState = MutableStateFlow(JobUiState())
+    private var _jobUiState = MutableStateFlow(FavoriteUiState())
     val jobUiState = _jobUiState.asStateFlow()
 
     override val effectChannel : Channel<JobEffect> = Channel()
@@ -38,11 +37,11 @@ class JobViewModel @Inject constructor(
         when(event) {
 
             JobEvent.RefreshData -> {
-                getJobs()
+                getJobsFavorite()
             }
 
             is JobEvent.SelectedJob -> {
-                getJobById(event.id)
+
             }
             is JobEvent.ChangeFavorite -> {
                 changeFavorite(event.job)
@@ -52,17 +51,18 @@ class JobViewModel @Inject constructor(
     }
 
     init {
-        getJobs()
+        getJobsFavorite()
     }
 
-    private fun getJobs() {
+
+    private fun getJobsFavorite() {
         viewModelScope.launch(Dispatchers.IO) {
 
-            getJobsListUseCase().collectAsResult(
+            getJobFavoriteListUseCase().collectAsResult(
                 onSuccess = { jobs ->
                     _jobUiState.update { currentState ->
                         currentState.copy(
-                            jobs = jobs,
+                            favoriteList = jobs,
                             loading  = false,
                             error = null
                         )
@@ -89,14 +89,13 @@ class JobViewModel @Inject constructor(
         }
     }
 
-
     private fun changeFavorite(job: Job) {
         viewModelScope.launch {
             setFavoriteJobUseCase(job).collectAsResult(
                 onSuccess = { newValue ->
                     _jobUiState.update { currentState ->
                         currentState.copy(
-                            jobs = currentState.jobs.toMutableList()
+                            favoriteList = currentState.favoriteList.toMutableList()
                                 .map { if (it.id == job.id) it.copy(favorite = newValue) else it },
                         )
                     }
@@ -105,38 +104,38 @@ class JobViewModel @Inject constructor(
         }
     }
 
-    private fun getJobById(id : String) {
-        viewModelScope.launch {
-            getJobByIdUseCase(
-                jobId = id
-            ).collectAsResult(
-                onSuccess = { jobDetail ->
-                    _jobUiState.update { currentState ->
-                        currentState.copy(
-                            selectJob = jobDetail,
-                            loadingDetail = false,
-                            errorDetail = null
-                        )
-                    }
-                },
-                onError = { ex, message ->
-                    _jobUiState.update { currentState ->
-                        currentState.copy(
-                            loadingDetail = false,
-                            errorDetail = message
-                        )
-                    }
-                },
-                onLoading = {
-                    _jobUiState.update { currentState ->
-                        currentState.copy(
-                            loadingDetail = true,
-                            errorDetail = null
-                        )
-                    }
-                }
-            )
-        }
-    }
+//    private fun getJobById(id : String) {
+//        viewModelScope.launch {
+//            getJobByIdUseCase(
+//                jobId = id
+//            ).collectAsResult(
+//                onSuccess = { jobDetail ->
+//                    _jobUiState.update { currentState ->
+//                        currentState.copy(
+//                            selectJob = jobDetail,
+//                            loadingDetail = false,
+//                            errorDetail = null
+//                        )
+//                    }
+//                },
+//                onError = { ex, message ->
+//                    _jobUiState.update { currentState ->
+//                        currentState.copy(
+//                            loadingDetail = false,
+//                            errorDetail = message
+//                        )
+//                    }
+//                },
+//                onLoading = {
+//                    _jobUiState.update { currentState ->
+//                        currentState.copy(
+//                            loadingDetail = true,
+//                            errorDetail = null
+//                        )
+//                    }
+//                }
+//            )
+//        }
+//    }
 
 }

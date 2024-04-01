@@ -29,8 +29,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.os.bundleOf
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.careerboast.R
@@ -38,9 +36,6 @@ import com.example.careerboast.common.composable.CareerErrorScreen
 import com.example.careerboast.common.composable.CareerLoadingScreen
 import com.example.careerboast.domain.model.specialities.Speciality
 import com.example.careerboast.ui.theme.White
-import com.example.careerboast.utils.SPECIALITY_ID
-import com.example.careerboast.view.navigation.CareerBoastAppState
-import com.example.careerboast.view.navigation.Screen
 import com.example.careerboast.view.navigation.drawer.AppBar
 
 

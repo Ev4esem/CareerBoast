@@ -29,9 +29,6 @@ import androidx.compose.ui.unit.dp
 import com.example.careerboast.common.TabItem
 import com.example.careerboast.ui.theme.LightGreyBackground
 import com.example.careerboast.view.navigation.CareerBoastAppState
-import com.example.careerboast.view.navigation.Screen
-import com.example.careerboast.view.screens.job.FavoriteJobScreen
-import com.example.careerboast.view.screens.job.JobScreen
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
