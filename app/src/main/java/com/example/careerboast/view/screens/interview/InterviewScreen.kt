@@ -34,6 +34,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.os.bundleOf
+import androidx.navigation.NavController
 import com.example.careerboast.R
 import com.example.careerboast.common.composable.BackButtonBasic
 import com.example.careerboast.common.composable.BasicButton
@@ -45,35 +47,31 @@ import com.example.careerboast.common.ext.basisPadding
 import com.example.careerboast.common.ext.smallSpacer
 import com.example.careerboast.common.ext.spacer
 import com.example.careerboast.domain.model.interviews.Answer
+import com.example.careerboast.domain.model.interviews.AnswerResult
 import com.example.careerboast.domain.model.interviews.Question
 import com.example.careerboast.ui.theme.Black
 import com.example.careerboast.ui.theme.LavenderElement
+import com.example.careerboast.utils.ANSWER_STATE
 import com.example.careerboast.view.navigation.CareerBoastAppState
 import com.example.careerboast.view.navigation.Screen
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
-
-/**
- * Какие у нас есть случаи для завершения интервью?
- *
- * 1. Закончилось время , показываем диалог, в диалоге, кнопки
- * перейти к фидбеку или начать заново
- * 2. Закончились вопросы , сразу переходим на экран фидбэка
- * 3. Клик по кнопке назад , появляется диалог
- *
- * Как мы проверяем правильный ли ответ или нет
- *
- *
- */
 
 @Composable
 fun InterviewScreen(
     uiState : InterviewUiState,
     appState : CareerBoastAppState,
+    answerResult : List<AnswerResult>,
     onEvent : (InterviewEvent) -> Unit,
-    //TODO Список материалов должен составляться на экране результатов
-    onNavigation : (Int, Int, List<String>) -> Unit
+    onNavigation : (String) -> Unit
 ) {
 
+    val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+    val type = Types.newParameterizedType(List::class.java, AnswerResult::class.java)
+    val jsonAdapter = moshi.adapter<List<AnswerResult>>(type)
+    val userJson = jsonAdapter.toJson(answerResult)
 
     FinishedDialog(
         title = stringResource(R.string.congratulations),
@@ -81,16 +79,16 @@ fun InterviewScreen(
         state = uiState.finishDialogIsVisible,
         onConfirm = {
             onNavigation(
-                uiState.correctQuestionListId.size,
-                uiState.inCorrectQuestionListId.size,
-                uiState.inCorrectQuestionListId
+                userJson
             )
+            onEvent(InterviewEvent.FinishedInterview)
         },
         onDismiss = {
             onEvent(InterviewEvent.ChangeFinishDialogState(false))
             appState.navController.navigateUp()
         }
     )
+
 
 
     if (uiState.isTimerFinished) {
@@ -100,16 +98,12 @@ fun InterviewScreen(
             message = stringResource(R.string.dialog_message),
             onConfirm = {
                 onNavigation(
-                    uiState.correctQuestionListId.size,
-                    uiState.inCorrectQuestionListId.size,
-                    uiState.inCorrectQuestionListId
+                    userJson
                 )
+                onEvent(InterviewEvent.FinishedInterview)
             },
             onDismiss = {
-                appState.navigateAndPopUp(
-                    Screen.INTERVIEWS_SCREEN.route,
-                    Screen.INTERVIEW_SCREEN.route
-                )
+                appState.navController.navigateUp()
             }
         )
 
@@ -192,11 +186,9 @@ private fun QuizTopAppBar(
         ConfirmationDialog(
             title = stringResource(id = R.string.exit_with_interview),
             message = stringResource(id = R.string.question_finished_inter),
+            state = showDialog,
             onConfirm = {
-                appState.navigateAndPopUp(
-                    route = Screen.INTERVIEWS_SCREEN.route,
-                    popUp = Screen.INTERVIEW_SCREEN.route
-                )
+                appState.navController.navigateUp()
             },
             onDismiss = {
                 showDialog = false
@@ -265,7 +257,7 @@ fun QuestionList(
             .basisPadding()
     ) {
         Text(
-            text = question.text,
+            text = question.question,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(vertical = 16.dp)
         )
@@ -383,12 +375,14 @@ fun Timer(minutes : Long, second : Long) {
         Row(
             modifier = Modifier
                 .width(180.dp)
-                .height(60.dp)
+                .height(60.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
 
             Text(
                 text = "$minutes:$second",
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.titleLarge
             )
 
         }
@@ -402,9 +396,13 @@ fun Timer(minutes : Long, second : Long) {
 @Composable
 private fun InterviewScreenPrev() {
 
-    AnswerItem("Android", true) {
+    Column {
+
+        Timer(minutes = 34, second = 22)
 
     }
+
+
 
 
 }

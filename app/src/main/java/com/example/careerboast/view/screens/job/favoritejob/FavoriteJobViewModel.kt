@@ -2,6 +2,7 @@ package com.example.careerboast.view.screens.job.favoritejob
 
 import androidx.lifecycle.viewModelScope
 import com.example.careerboast.domain.model.jobs.Job
+import com.example.careerboast.domain.model.jobs.JobEntity
 import com.example.careerboast.domain.repositories.LogService
 import com.example.careerboast.domain.use_cases.job.GetJobFavoriteListUseCase
 import com.example.careerboast.domain.use_cases.job.SetFavoriteJobUseCase
@@ -11,7 +12,6 @@ import com.example.careerboast.utils.EventHandler
 import com.example.careerboast.utils.collectAsResult
 import com.example.careerboast.view.screens.job.JobEffect
 import com.example.careerboast.view.screens.job.JobEvent
-import com.example.careerboast.view.screens.job.JobUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -38,10 +38,6 @@ class FavoriteJobViewModel @Inject constructor(
 
             JobEvent.RefreshData -> {
                 getJobsFavorite()
-            }
-
-            is JobEvent.SelectedJob -> {
-
             }
             is JobEvent.ChangeFavorite -> {
                 changeFavorite(event.job)
@@ -103,39 +99,5 @@ class FavoriteJobViewModel @Inject constructor(
             )
         }
     }
-
-//    private fun getJobById(id : String) {
-//        viewModelScope.launch {
-//            getJobByIdUseCase(
-//                jobId = id
-//            ).collectAsResult(
-//                onSuccess = { jobDetail ->
-//                    _jobUiState.update { currentState ->
-//                        currentState.copy(
-//                            selectJob = jobDetail,
-//                            loadingDetail = false,
-//                            errorDetail = null
-//                        )
-//                    }
-//                },
-//                onError = { ex, message ->
-//                    _jobUiState.update { currentState ->
-//                        currentState.copy(
-//                            loadingDetail = false,
-//                            errorDetail = message
-//                        )
-//                    }
-//                },
-//                onLoading = {
-//                    _jobUiState.update { currentState ->
-//                        currentState.copy(
-//                            loadingDetail = true,
-//                            errorDetail = null
-//                        )
-//                    }
-//                }
-//            )
-//        }
-//    }
 
 }

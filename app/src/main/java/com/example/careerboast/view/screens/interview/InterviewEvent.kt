@@ -10,6 +10,7 @@ sealed interface InterviewEvent {
         val selectedAnswerIndex: Int
     ) : InterviewEvent
 
+    data object FinishedInterview : InterviewEvent
 
     data object SubmitAnswer : InterviewEvent
 

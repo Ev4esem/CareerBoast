@@ -6,14 +6,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.careerboast.domain.model.interviews.StudyMaterial
+import com.example.careerboast.domain.model.interviews.AnswerResult
 import com.example.careerboast.utils.ARTICLE_URL
-import com.example.careerboast.utils.CORRECT_ANSWER
-import com.example.careerboast.utils.INCORRECT_ANSWER
 import com.example.careerboast.utils.INTERVIEW_ID
 import com.example.careerboast.utils.JOB_ID
 import com.example.careerboast.utils.SPECIALITY_ID
-import com.example.careerboast.utils.STUDY_LIST
+import com.example.careerboast.utils.ANSWER_STATE
+import com.example.careerboast.utils.MENTOR_ID
 import com.example.careerboast.utils.TIME_TOTAL
 import com.example.careerboast.view.navigation.routes.FeedbackRoute
 import com.example.careerboast.view.navigation.routes.InterviewListRoute
@@ -21,9 +20,10 @@ import com.example.careerboast.view.navigation.routes.InterviewRoute
 import com.example.careerboast.view.navigation.routes.JobDetailRoute
 import com.example.careerboast.view.navigation.routes.JobToFavoriteRoute
 import com.example.careerboast.view.navigation.routes.LogInRoute
+import com.example.careerboast.view.navigation.routes.MentorDetailRoute
+import com.example.careerboast.view.navigation.routes.MentorToFavoriteRoute
 import com.example.careerboast.view.navigation.routes.SpecialitiesRoute
 import com.example.careerboast.view.screens.feedback.WebViewContainer
-import com.google.gson.Gson
 
 
 fun buildInterviewListRoute(argument: String) = "${Screen.INTERVIEWS_SCREEN.route}/$argument"
@@ -32,12 +32,13 @@ fun buildInterviewRoute(interviewId : String, time : String) = "${Screen.INTERVI
 
 fun buildJobDetailRoute(argument: String) = "${Screen.DETAILS_JOB_SCREEN.route}/$argument"
 
+fun buildMentorDetailRoute(argument: String) = "${Screen.DETAILS_MENTOR_SCREEN.route}/$argument"
+
+
 fun buildFeedbackRoute(
-    correctAnswer : Int,
-    inCorrectAnswer : Int,
-    studyMaterials : List<String>?
+    answerResult : String
 ) : String {
-    return "${Screen.FEEDBACK_SCREEN.route}/$correctAnswer/$inCorrectAnswer/$studyMaterials"
+    return "${Screen.FEEDBACK_SCREEN.route}/$answerResult"
 }
 
 fun NavGraphBuilder.screens(
@@ -59,6 +60,9 @@ fun NavGraphBuilder.screens(
     }
 
     composable(route = Screen.MENTORS_SCREEN.route) {
+
+        MentorToFavoriteRoute(drawerState = drawerState, appState = appState)
+
     }
 
     composable(
@@ -76,7 +80,6 @@ fun NavGraphBuilder.screens(
     }
     composable(
         route = Screen.WEB_VIEW_SCREEN.route + "/{$ARTICLE_URL}",
-        arguments = listOf(navArgument(ARTICLE_URL) { type = NavType.StringType })
         ) { backStackEntry ->
 
         val articleUrl = backStackEntry.arguments?.getString(ARTICLE_URL) ?: ""
@@ -85,13 +88,7 @@ fun NavGraphBuilder.screens(
 
     }
     composable(
-        route = Screen.FEEDBACK_SCREEN.route + "/{$CORRECT_ANSWER}" + "/{$INCORRECT_ANSWER}" + "/{$STUDY_LIST}",
-        arguments = listOf(
-            navArgument(STUDY_LIST) {
-                type = NavType.StringType
-                defaultValue = ""
-            }
-        )
+        route = Screen.FEEDBACK_SCREEN.route + "/{$ANSWER_STATE}",
     ) {
         FeedbackRoute(appState = appState)
     }
@@ -105,7 +102,10 @@ fun NavGraphBuilder.screens(
         JobToFavoriteRoute(drawerState = drawerState, appState)
     }
 
-    composable(route = Screen.DETAILS_MENTOR_SCREEN.route) {
+    composable(route = Screen.DETAILS_MENTOR_SCREEN.route + "/{$MENTOR_ID}") {
+
+        MentorDetailRoute(appState = appState)
+
     }
 
 

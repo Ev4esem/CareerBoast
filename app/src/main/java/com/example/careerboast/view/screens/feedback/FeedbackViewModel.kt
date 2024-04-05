@@ -2,55 +2,132 @@ package com.example.careerboast.view.screens.feedback
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.example.careerboast.domain.model.interviews.AnswerResult
 import com.example.careerboast.domain.model.interviews.StudyMaterial
 import com.example.careerboast.domain.repositories.LogService
-import com.example.careerboast.utils.CORRECT_ANSWER
+import com.example.careerboast.domain.use_cases.interview.GetStudyMaterialByIdUseCase
+import com.example.careerboast.utils.ANSWER_STATE
 import com.example.careerboast.utils.CareerBoastViewModel
-import com.example.careerboast.utils.INCORRECT_ANSWER
-import com.example.careerboast.utils.STUDY_LIST
+import com.example.careerboast.utils.EventHandler
+import com.example.careerboast.utils.collectAsResult
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class FeedbackViewModel @Inject constructor(
+    private val getStudyMaterialByIdUseCase : GetStudyMaterialByIdUseCase,
     savedStateHandle : SavedStateHandle,
     logService : LogService
-) : CareerBoastViewModel(logService) {
+) : CareerBoastViewModel(logService), EventHandler<FeedbackEvent> {
 
     private val _uiState = MutableStateFlow(FeedbackUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val correctAnswerCount : Int = /*checkNotNull(savedStateHandle[CORRECT_ANSWER])*/ 0
-    private val inCorrectAnswerCount : Int = /*checkNotNull(savedStateHandle[INCORRECT_ANSWER])*/ 0
-    private val studyList : String = /*checkNotNull(savedStateHandle[STUDY_LIST])*/  "sd"
+    private val studyList : String = checkNotNull(savedStateHandle[ANSWER_STATE])
+
+    private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+    private val type = Types.newParameterizedType(List::class.java, AnswerResult::class.java)
+    private val jsonAdapter = moshi.adapter<List<AnswerResult>>(type)
+
+    private val userObject = jsonAdapter.fromJson(studyList)
+
+    private val questionIds = userObject
+        ?.filter { it.answerState == AnswerResult.AnswerState.Wrong }
+        ?.map { it.id }
+    private val correctAnswerCount =
+        userObject?.count { it.answerState == AnswerResult.AnswerState.Correct }
+    private val inCorrectAnswerCount =
+        userObject?.count { it.answerState == AnswerResult.AnswerState.Wrong }
+
+
+    override fun obtainEvent(event : FeedbackEvent) {
+        when(event) {
+            FeedbackEvent.RefreshData -> {
+                getStudyMaterialList(questionIds)
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        correctAnswer = correctAnswerCount ?: 0,
+                        incorrectAnswer = inCorrectAnswerCount ?: 0
+                    )
+                }
+            }
+        }
+    }
 
     init {
 
-       val studyListMaterial = emptyList<StudyMaterial>()
+        getStudyMaterialList(questionIds)
+
         _uiState.update { currentState ->
             currentState.copy(
-                studyList = studyListMaterial,
-                correctAnswer = correctAnswerCount,
-                incorrectAnswer = inCorrectAnswerCount
+                correctAnswer = correctAnswerCount ?: 0,
+                incorrectAnswer = inCorrectAnswerCount ?: 0
             )
         }
     }
 
-    private fun getStudyMaterialsFromJson(json : String) : List<StudyMaterial> {
-        return json.let {
-            try {
-                val listType = object : TypeToken<List<StudyMaterial>>() {}.type
-                Gson().fromJson(json, listType)
-            } catch (e : JsonParseException) {
-                emptyList()
+    private fun getStudyMaterialList(questionIds : List<String>?) {
+
+        viewModelScope.launch {
+            Log.d("StudyMaterialList", "$questionIds")
+
+            val studyMaterialList = mutableListOf<StudyMaterial>()
+
+            questionIds?.forEach { questionId ->
+
+                getStudyMaterialByIdUseCase(questionId).collectAsResult(
+                    onSuccess = { studyMaterial ->
+                        Log.d("StudyMaterial", "$studyMaterial")
+                        studyMaterial?.let { studyMaterialList.add(it) }
+                        _uiState.update { currentState ->
+
+                            currentState.copy(
+                                studyList = studyMaterialList,
+                                loading = false,
+                                error = null
+                            )
+
+                        }
+                    },
+                    onError = { ex, message ->
+                        _uiState.update { currentState ->
+
+                            currentState.copy(
+                                error = message,
+                                loading = false
+                            )
+
+                        }
+                    },
+                    onLoading = {
+                        _uiState.update { currentState ->
+
+                            currentState.copy(
+                                error = null,
+                                loading = true
+                            )
+
+                        }
+                    }
+                )
             }
+
         }
+
     }
+
+
+
 
 }

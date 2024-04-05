@@ -18,7 +18,9 @@ fun FeedbackRoute(
 
     FeedbackScreen(
         uiState = uiState,
-        appState = appState)
+        appState = appState,
+        onEvent = viewModel::obtainEvent
+    )
 
 
 }

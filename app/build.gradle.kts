@@ -72,8 +72,12 @@ dependencies {
     // Coil
     implementation(libs.coil.compose)
 
-    //Retrofit
+    // Moshi
+    implementation(libs.moshi.kotlin)
+    //noinspection KaptUsageInsteadOfKsp
+    kapt(libs.moshi.kotlin.codegen)
 
+    //Retrofit
     implementation(libs.squareup.retrofit2)
     implementation(libs.squareup.retrofit2.converter.gson)
     implementation(libs.code.gson)

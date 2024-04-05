@@ -7,6 +7,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.gson.JsonParseException
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers
@@ -49,7 +50,7 @@ fun <T> Flow<T>.asResult() : Flow<Response<T>> {
             emit(
                 Response.Failure(
                     e = exception,
-                    message = handleException(ex)
+                    message = handleException(exception)
                 )
             )
         }
@@ -90,39 +91,25 @@ fun <T> ObserveEffect(flow : Flow<T>, onEvent : (T) -> Unit) {
 }
 
 // Обработка ошибок
-fun handleException(exception : Throwable?) : String {
-    return when(exception) {
-        is HttpException -> parseHttpException(exception)
+fun handleException(exception : Exception?) : String {
+    return when (exception) {
+        is FirebaseFirestoreException -> parseFirestoreException(exception)
         is IOException -> "Произошла ошибка при загрузке данных, проверьте подключение к сети"
-        is JsonSyntaxException,is JsonParseException -> "Ошибка при обработке данных"
-        is NetworkOnMainThreadException -> "Сетевая операция на главном потоке"
         is SecurityException -> "Проблема с безопасностью"
-        is IllegalArgumentException -> "Некорректные аргументы"
-        is SQLiteException -> "Ошибка базы данных"
-        is OutOfMemoryError -> "Недостаточно памяти"
-        is ParseException -> "Ошибка при анализе данных"
         else -> "Неизвестная ошибка: ${exception?.localizedMessage}"
     }
 }
 
-private fun parseHttpException(exception : HttpException) : String {
+private fun parseFirestoreException(exception : FirebaseFirestoreException) : String {
 
-    val statusCode = exception.code()
-    val errorBody = exception.response()?.errorBody()?.string()
-
-    val defaultErrorMessage = "Произошла ошибка, пожалуйста попробуйте позже."
-
-    return when(statusCode) {
-        HttpURLConnection.HTTP_BAD_REQUEST -> errorBody ?: "Неверный запрос."
-        HttpURLConnection.HTTP_UNAUTHORIZED -> errorBody ?: "Пустой или неправильный токен."
-        HttpURLConnection.HTTP_PAYMENT_REQUIRED,
-        HttpURLConnection.HTTP_FORBIDDEN -> errorBody ?: "Превышен лимит запросов."
-
-        HttpURLConnection.HTTP_NOT_FOUND -> errorBody ?: "Ресурс не найден."
-        429 -> errorBody ?: "Слишком много запросов. Общий лимит - 20 запросов в секунду."
-        in 300..399 -> errorBody ?: "Ошибка клиента: $statusCode."
-        in 500..599 -> "Ошибка сервера: $statusCode."
-        else -> defaultErrorMessage
+    return when (exception.code) {
+        FirebaseFirestoreException.Code.PERMISSION_DENIED -> "Доступ запрещен: ${exception.message}"
+        FirebaseFirestoreException.Code.NOT_FOUND -> "Ресурс не найден: ${exception.message}"
+        FirebaseFirestoreException.Code.ALREADY_EXISTS -> "Ресурс уже существует: ${exception.message}"
+        FirebaseFirestoreException.Code.ABORTED -> "Операция отменена: ${exception.message}"
+        FirebaseFirestoreException.Code.UNAUTHENTICATED -> "Не аутентифицирован: ${exception.message}"
+        FirebaseFirestoreException.Code.UNAVAILABLE -> "Сервис недоступен: ${exception.message}"
+        FirebaseFirestoreException.Code.CANCELLED -> "Операция отменена: ${exception.message}"
+        else -> "Ошибка : ${exception.message}"
     }
-
 }

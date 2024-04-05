@@ -7,6 +7,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.careerboast.utils.ObserveEffect
+import com.example.careerboast.utils.SPECIALITY_ID
 import com.example.careerboast.view.navigation.CareerBoastAppState
 import com.example.careerboast.view.navigation.Screen
 import com.example.careerboast.view.navigation.buildFeedbackRoute
@@ -22,7 +23,7 @@ fun InterviewRoute(
     val context = LocalContext.current
     val viewModel : InterviewViewModel = hiltViewModel()
     val uiState by viewModel.interviewUiState.collectAsStateWithLifecycle()
-
+    val answerState by viewModel.answerState.collectAsStateWithLifecycle()
     // todo Не добавил обработки в InterviewViewModel
     ObserveEffect(viewModel.effectFlow) { effect ->
         when (effect) {
@@ -36,15 +37,14 @@ fun InterviewRoute(
         appState = appState,
         onEvent = viewModel::obtainEvent,
         uiState = uiState,
-        onNavigation = { correctAnswerCount, incorrectAnswerCount, studyList ->
+        answerResult = answerState,
+        onNavigation = { studyList ->
             //TODO Нужно очистить текущий экран из стека и перейти к другому экрану
             appState.navigateAndPopUp(
                 route = buildFeedbackRoute(
-                    correctAnswer = correctAnswerCount,
-                    inCorrectAnswer = incorrectAnswerCount,
-                    studyMaterials = studyList
+                    answerResult = studyList
                 ),
-                popUp = Screen.INTERVIEW_SCREEN.route
+                popUp = Screen.INTERVIEW_SCREEN.route + SPECIALITY_ID
             )
         }
     )

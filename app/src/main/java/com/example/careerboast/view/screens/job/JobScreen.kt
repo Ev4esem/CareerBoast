@@ -53,14 +53,14 @@ import com.example.careerboast.common.composable.CareerLoadingScreen
 import com.example.careerboast.common.ext.basisPadding
 import com.example.careerboast.common.ext.spacer
 import com.example.careerboast.domain.model.jobs.Job
+import com.example.careerboast.domain.model.jobs.JobEntity
+import com.example.careerboast.domain.model.jobs.toEntity
 import com.example.careerboast.ui.theme.Black
 import com.example.careerboast.ui.theme.Blue
 import com.example.careerboast.ui.theme.DarkBlue
 import com.example.careerboast.ui.theme.Grey
 import com.example.careerboast.ui.theme.LightGreyBackground
 import com.example.careerboast.ui.theme.White
-import com.example.careerboast.view.navigation.CareerBoastAppState
-import com.example.careerboast.view.navigation.Screen
 import com.example.careerboast.view.navigation.drawer.AppBar
 import com.example.careerboast.view.screens.job.favoritejob.FavoriteJobScreen
 import com.example.careerboast.view.screens.job.favoritejob.FavoriteUiState
@@ -111,7 +111,6 @@ fun Jobs_to_FavoriteJobs(
             unSelected = LightGreyBackground,
             textSelected = Black,
             textUnSelected = Grey,
-            screen = Screen.INTERSHIPS_SCREEN.route
         ),
         TabItem(
             title = R.string.favorite,
@@ -119,7 +118,6 @@ fun Jobs_to_FavoriteJobs(
             unSelected = LightGreyBackground,
             textSelected = Black,
             textUnSelected = Grey,
-            screen = Screen.FAVORITE_JOB_SCREEN.route
         )
     )
 
@@ -166,7 +164,6 @@ fun TabLayoutJob(
     onEvent : (JobEvent) -> Unit,
     onNavigation : (String) -> Unit
 ) {
-    // todo Вынести в общий компонент и переиспользовать
     Column {
 
         var selectedTabIndex by remember {
@@ -258,8 +255,6 @@ fun TabLayoutJob(
                 }
             }
         }
-
-
     }
 }
 
@@ -300,7 +295,7 @@ fun JobList(
 
 @Composable
 fun JobFavoriteList(
-    list : List<Job>,
+    list : List<JobEntity>,
     onEvent : (JobEvent) -> Unit,
     onNavigation : (String) -> Unit
 ) {
@@ -311,7 +306,7 @@ fun JobFavoriteList(
     ) {
         items(
             items = list,
-            key = Job::id
+            key = JobEntity::id
         ) { job ->
 
             JobItem(
@@ -322,8 +317,9 @@ fun JobFavoriteList(
                 onItemClick = {
                     onNavigation(job.id)
                 },
+                // todo
                 onClickFavorite = {
-                    onEvent(JobEvent.ChangeFavorite(job))
+                    onEvent(JobEvent.ChangeFavorite(job.toEntity()))
                 },
                 isFavorite = job.favorite
             )

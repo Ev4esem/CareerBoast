@@ -2,7 +2,6 @@ package com.example.careerboast.domain.model.jobs
 
 import kotlinx.serialization.Serializable
 
-@Serializable
 data class FeedbackJob(
     val description : String = "",
     val feedback : Int = 0,

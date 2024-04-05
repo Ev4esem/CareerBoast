@@ -5,7 +5,7 @@ import com.example.careerboast.domain.repositories.interview.InterviewRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetQuestionByIdUseCase @Inject constructor(
+class GetStudyMaterialByIdUseCase @Inject constructor(
     private val repository : InterviewRepository
 ) {
 

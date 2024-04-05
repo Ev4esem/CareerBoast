@@ -10,9 +10,4 @@ sealed interface JobEvent {
         val job : Job
     ) : JobEvent
 
-    data class SelectedJob(
-        val id : String
-    ) : JobEvent
-
-
 }

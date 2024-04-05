@@ -36,7 +36,7 @@ fun <T> Flow<T>.asAuthResult() : Flow<ValidationAuth<T>> {
             emit(
                 ValidationAuth.Failure(
                     e = exception,
-                    message = handleException(ex)
+                    message = handleException(exception)
                 )
             )
         }

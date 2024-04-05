@@ -7,7 +7,6 @@ import com.example.careerboast.view.navigation.CareerBoastAppState
 import com.example.careerboast.view.screens.job.JobEvent
 import com.example.careerboast.view.screens.job.JobFavoriteList
 
-// todo
 @Composable
 fun FavoriteJobScreen(
     onNavigation : (String) -> Unit,

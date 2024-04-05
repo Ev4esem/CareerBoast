@@ -2,16 +2,11 @@ package com.example.careerboast.data.repositories.speciality
 
 import android.util.Log
 import com.example.careerboast.di.IoDispatcher
-import com.example.careerboast.domain.model.interviews.Interview
 import com.example.careerboast.domain.model.specialities.Speciality
 import com.example.careerboast.domain.repositories.speciality.SpecialitiesRepository
-import com.example.careerboast.utils.INTERVIEWS
 import com.example.careerboast.utils.SPECIALITIES
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.toObject
-import com.google.firebase.firestore.toObjects
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

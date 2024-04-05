@@ -38,91 +38,109 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.careerboast.R
 import com.example.careerboast.common.composable.BackButtonBasic
+import com.example.careerboast.common.composable.CareerErrorScreen
+import com.example.careerboast.common.composable.CareerLoadingScreen
 import com.example.careerboast.common.ext.basisPadding
 import com.example.careerboast.domain.model.interviews.StudyMaterial
 import com.example.careerboast.ui.theme.Black
 import com.example.careerboast.ui.theme.DarkBlue
 import com.example.careerboast.ui.theme.LavenderElement
 import com.example.careerboast.ui.theme.LavenderElementLight
+import com.example.careerboast.utils.SPECIALITY_ID
 import com.example.careerboast.view.navigation.CareerBoastAppState
 import com.example.careerboast.view.navigation.Screen
 
 @Composable
 fun FeedbackScreen(
     uiState : FeedbackUiState,
-    appState : CareerBoastAppState
+    appState : CareerBoastAppState,
+    onEvent : (FeedbackEvent) -> Unit
 ) {
 
 
-    Scaffold(
-        topBar = {
-            TopBarFeedback(
-                correctAnswersCount = uiState.correctAnswer,
-                totalQuestionsCount = uiState.correctAnswer + uiState.incorrectAnswer,
-                onClick = {
-                    appState.navigateAndPopUp(
-                        route = Screen.INTERVIEWS_SCREEN.route,
-                        popUp = Screen.FEEDBACK_SCREEN.route
-                    )
-                }
-            )
+    if (! uiState.error.isNullOrBlank()) {
+        CareerErrorScreen(
+            errorText = uiState.error
+        ) {
+            onEvent(FeedbackEvent.RefreshData)
         }
-    ) {
-
-        Column(
-            modifier = Modifier.padding(it),
-            horizontalAlignment = Alignment.CenterHorizontally
+    } else if (uiState.loading) {
+        CareerLoadingScreen()
+    } else {
+        Scaffold(
+            topBar = {
+                TopBarFeedback(
+                    correctAnswersCount = uiState.correctAnswer,
+                    totalQuestionsCount = uiState.correctAnswer + uiState.incorrectAnswer,
+                    onClick = {
+                        appState.navigateAndPopUp(
+                            route = Screen.INTERVIEWS_SCREEN.route + SPECIALITY_ID,
+                            popUp = Screen.FEEDBACK_SCREEN.route
+                        )
+                    }
+                )
+            }
         ) {
 
-            Row(
-                modifier = Modifier.basisPadding(),
-                horizontalArrangement = Arrangement.SpaceBetween
+            Column(
+                modifier = Modifier.padding(it),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CountAnswer(
-                    icon = R.drawable.tick,
-                    title = R.string.correct,
-                    count = uiState.correctAnswer,
-                    contentDescription = R.string.correct
-                )
 
-                CountAnswer(
-                    icon = R.drawable.cross,
-                    title = R.string.incorrect,
-                    count = uiState.incorrectAnswer,
-                    contentDescription = R.string.incorrect
-                )
+                Row(
+                    modifier = Modifier.basisPadding(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    CountAnswer(
+                        icon = R.drawable.tick,
+                        title = R.string.correct,
+                        count = uiState.correctAnswer,
+                        contentDescription = R.string.correct
+                    )
+
+                    CountAnswer(
+                        icon = R.drawable.cross,
+                        title = R.string.incorrect,
+                        count = uiState.incorrectAnswer,
+                        contentDescription = R.string.incorrect
+                    )
+
+                }
 
             }
 
-        }
-
-        Spacer(modifier = Modifier
-            .fillMaxWidth()
-            .height(36.dp))
-
-        if (uiState.studyList.isNotEmpty()) {
-
-            Row(
+            Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .basisPadding(),
-                horizontalArrangement = Arrangement.Start
-            ) {
-                Text(
-                    text = stringResource(id = R.string.recommended_study),
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .height(20.dp))
-            StudyMaterialList(
-                list = uiState.studyList,
-                appState = appState
+                    .height(36.dp)
             )
 
-        }
+            if (uiState.studyList.isNotEmpty()) {
 
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .basisPadding(),
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.recommended_study),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
+                )
+                StudyMaterialList(
+                    list = uiState.studyList,
+                    appState = appState
+                )
+
+            }
+
+        }
     }
 
 

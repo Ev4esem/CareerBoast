@@ -30,6 +30,7 @@ import com.example.careerboast.common.TabItem
 import com.example.careerboast.ui.theme.LightGreyBackground
 import com.example.careerboast.view.navigation.CareerBoastAppState
 
+// todo удалить если нужно
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabLayout(
@@ -112,7 +113,6 @@ fun TabLayout(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                appState.navigate(tabItems[index].screen)
 
 
 //                val currentItem = tabItems.getOrNull(index)

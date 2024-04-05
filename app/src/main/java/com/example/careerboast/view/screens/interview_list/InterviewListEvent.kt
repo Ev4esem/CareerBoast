@@ -4,6 +4,4 @@ sealed interface InterviewListEvent {
 
     object RefreshData : InterviewListEvent
 
-    object ClearSelectedSpeciality : InterviewListEvent
-
 }

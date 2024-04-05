@@ -64,6 +64,10 @@
     <string name="social_media">Social Media</string>
     <string name="pricing">Pricing</string>
     <string name="reviews">Reviews</string>
+    <string name="details">Details</string>
+    <string name="delete">Delete</string>
+    <string name="about">About</string>
+
 
     <!-- Feedback -->
 

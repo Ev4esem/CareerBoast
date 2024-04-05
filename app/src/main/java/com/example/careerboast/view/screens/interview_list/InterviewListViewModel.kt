@@ -38,27 +38,12 @@ class InterviewListViewModel @Inject constructor(
             InterviewListEvent.RefreshData -> {
                 getSpecialityById(specialityId)
             }
-            is InterviewListEvent.ClearSelectedSpeciality -> {
-                clearSelectedSpeciality()
-            }
         }
     }
 
     init {
         Log.d("SpecialityIdViewModel",specialityId)
         getSpecialityById(specialityId)
-    }
-
-    private fun clearSelectedSpeciality() {
-        _interviewListUiState.update { currentState ->
-
-            currentState.copy(
-                interviewListLoading = false,
-                errorList = null,
-                selectSpeciality = emptyList()
-            )
-
-        }
     }
 
 

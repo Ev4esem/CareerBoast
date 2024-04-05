@@ -4,6 +4,7 @@ import android.os.CountDownTimer
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.example.careerboast.domain.model.interviews.AnswerResult
 import com.example.careerboast.domain.repositories.LogService
 import com.example.careerboast.domain.use_cases.interview.GetInterviewByIdUseCase
 import com.example.careerboast.utils.CareerBoastViewModel
@@ -35,6 +36,10 @@ class InterviewViewModel @Inject constructor(
     override val effectChannel : Channel<InterviewEffect> = Channel()
 
 
+    private val _answerState = MutableStateFlow<List<AnswerResult>>(emptyList())
+    val answerState = _answerState.asStateFlow()
+
+
     private val _interviewUiState = MutableStateFlow(InterviewUiState())
     val interviewUiState = _interviewUiState.asStateFlow()
 
@@ -47,8 +52,9 @@ class InterviewViewModel @Inject constructor(
 
         val initialTimeInMillis =
             TimeUnit.MINUTES.toMillis(minutes) + TimeUnit.SECONDS.toSeconds(seconds)
-
+        Log.d("InterviewId", interviewId)
         getQuestions(interviewId)
+
         startTimer(initialTimeInMillis)
     }
 
@@ -64,6 +70,10 @@ class InterviewViewModel @Inject constructor(
 
             InterviewEvent.SubmitAnswer -> {
                 nextQuestion()
+            }
+
+            InterviewEvent.FinishedInterview -> {
+                processInterviewResults()
             }
 
             is InterviewEvent.ChangeFinishDialogState -> {
@@ -82,7 +92,6 @@ class InterviewViewModel @Inject constructor(
 
             getInterviewByIdUseCase(interviewId).collectAsResult(
                 onSuccess = { questions ->
-                    Log.d("QuestionsGet", "$questions")
                     _interviewUiState.update { currentState ->
                         currentState.copy(
                             selectQuestion = questions,
@@ -90,7 +99,6 @@ class InterviewViewModel @Inject constructor(
                             error = null
                         )
                     }
-
                 },
                 onError = { ex, message ->
 
@@ -118,6 +126,7 @@ class InterviewViewModel @Inject constructor(
         }
 
     }
+
 
     private fun startTimer(timeInMillis : Long) {
 
@@ -150,35 +159,43 @@ class InterviewViewModel @Inject constructor(
             )
         }
     }
+
     fun onFinishTimer() {
         _interviewUiState.update { currentState ->
 
             currentState.copy(
                 isTimerFinished = true,
             )
-
-
         }
     }
 
-    private fun answerQuestion(questionId : String, selectedAnswerIndex : Int) {
+    private fun answerQuestion(questionId : String, selectedAnswerId : Int?) {
         viewModelScope.launch {
-            val question =
-                _interviewUiState.value.selectQuestion.find { it.id == questionId } ?: return@launch
-            //TODO Вычислять после завершения теста
-            val isCorrectAnswer = selectedAnswerIndex == question.correctAnswerIndex
 
-            val correctQuestionList = _interviewUiState.value.correctQuestionListId
-            val inCorrectQuestionList = _interviewUiState.value.inCorrectQuestionListId
+            val answerResultList = _interviewUiState.value.userAnswers
 
-            if (!isCorrectAnswer) {
-                correctQuestionList.add(question.id)
-            } else {
-                inCorrectQuestionList.add(question.id)
-            }
+            answerResultList.add(Pair(questionId, selectedAnswerId))
         }
     }
 
+    private fun processInterviewResults() {
+        val answerResultList = _interviewUiState.value.userAnswers
+
+        val answerResult = answerResultList.toAnswerResult()
+        _answerState.value = answerResult
+    }
+
+    private fun List<Pair<String, Int?>>.toAnswerResult() : List<AnswerResult> {
+        return map { (questionId, selectedAnswerId) ->
+            val question = _interviewUiState.value.selectQuestion.find { it.id == questionId }
+            val answerState = when {
+                selectedAnswerId == null -> AnswerResult.AnswerState.NoAnswer
+                selectedAnswerId == question?.correctAnswerId -> AnswerResult.AnswerState.Correct
+                else -> AnswerResult.AnswerState.Wrong
+            }
+            AnswerResult(id = questionId, answerState = answerState)
+        }
+    }
 
     private fun nextQuestion() {
         viewModelScope.launch {

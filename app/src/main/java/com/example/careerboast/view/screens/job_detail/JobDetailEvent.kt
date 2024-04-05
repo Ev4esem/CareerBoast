@@ -5,8 +5,4 @@ sealed interface JobDetailEvent {
     data object RefreshData : JobDetailEvent
 
 
-    data class SelectJobDetail(
-        val jobDetailId : String
-    ) : JobDetailEvent
-
 }

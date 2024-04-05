@@ -1,21 +1,16 @@
 package com.example.careerboast.data.repositories.job
 
-import android.util.Log
 import com.example.careerboast.di.IoDispatcher
-import com.example.careerboast.domain.model.interviews.Interview
-import com.example.careerboast.domain.model.jobs.FeedbackJob
 import com.example.careerboast.domain.model.jobs.Job
 import com.example.careerboast.domain.model.jobs.JobDetail
 import com.example.careerboast.domain.model.jobs.JobEntity
 import com.example.careerboast.domain.model.jobs.toFileEntity
-import com.example.careerboast.domain.model.jobs.toListEntity
 import com.example.careerboast.domain.repositories.job.JobRepository
 import com.example.careerboast.utils.FAVORITE_JOBS
-import com.example.careerboast.utils.FAVORITE_MENTORS
-import com.example.careerboast.utils.FEEDBACK_JOB
 import com.example.careerboast.utils.JOBS
 import com.example.careerboast.utils.JOB_DETAIL
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.toObject
@@ -58,42 +53,42 @@ class JobRepositoryImpl @Inject constructor(
     override suspend fun setFavoriteJob(job : Job) : Flow<Boolean> = flow {
 
         when(job.favorite) {
-            false -> {
-                deleteJobDocument(job.id)
-                emit(false)
-            }
             true -> {
+                deleteJobDocument(job.id)
+                db.collection(JOBS).document(job.id)
+                    .update(
+                        "favorite" ,  false
+                    )
+            }
+            false -> {
                 db.collection(FAVORITE_JOBS)
                     .add(job.toFileEntity(true))
                     .await()
-                emit(true)
+                db.collection(JOBS).document(job.id)
+                    .update(
+                        "favorite" ,  true
+                    )
             }
-
         }
+        emit(!job.favorite)
     }.flowOn(ioDispatcher)
 
     private suspend fun deleteJobDocument(jobId : String) {
-        db.collection(FAVORITE_JOBS).document(jobId)
-            .delete()
-            .await()
+      var jobCollection =  db.collection(FAVORITE_JOBS)
+          .whereEqualTo("id", jobId)
+      jobCollection.get()
+          .addOnSuccessListener { querySnapshot ->
+              for (doc in querySnapshot) {
+                  doc.reference.delete()
+              }
+          }.await()
     }
 
-    override suspend fun getJobFavoriteList() : Flow<List<Job>> = flow {
+    override suspend fun getJobFavoriteList() : Flow<List<JobEntity>> = flow {
         val jobs =  db.collection(FAVORITE_JOBS)
         val querySnapshot : QuerySnapshot = jobs.get().await()
         val job = querySnapshot.toObjects(JobEntity::class.java)
-        emit(job.toListEntity())
+        emit(job)
     }.flowOn(ioDispatcher)
-
-    override suspend fun getFeedbackListById(jobId : String) : Flow<List<FeedbackJob>> = flow {
-        val jobs = db.collection(JOBS)
-            .document(jobId)
-            .collection(JOB_DETAIL)
-            .document(jobId)
-            .collection(FEEDBACK_JOB)
-        val querySnapshot : QuerySnapshot = jobs.get().await()
-        val feedbackList = querySnapshot.toObjects(FeedbackJob::class.java)
-        emit(feedbackList)
-    }
 
 }

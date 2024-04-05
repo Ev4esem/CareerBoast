@@ -26,7 +26,3 @@ fun Job.toFileEntity(favorite : Boolean) = Job(
     title = title,
     favorite = favorite
 )
-
-fun List<JobEntity>.toListEntity() : List<Job> {
-    return map { it.toEntity() }
-}

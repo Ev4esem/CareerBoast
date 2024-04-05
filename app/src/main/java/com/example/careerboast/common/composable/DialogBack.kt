@@ -12,33 +12,38 @@ import com.example.careerboast.R
 fun ConfirmationDialog(
     title: String,
     message: String,
+    state : Boolean = false,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(title) },
-        text = { Text(message) },
-        confirmButton = {
-            Button(onClick = {
-                onConfirm()
-                onDismiss()
-            }) {
-                Text(
-                   text = stringResource(id = R.string.yes),
-                   style = MaterialTheme.typography.bodyMedium
-                )
+
+    if (state) {
+        AlertDialog(
+            onDismissRequest = onDismiss,
+            title = { Text(title) },
+            text = { Text(message) },
+            confirmButton = {
+                Button(onClick = {
+                    onConfirm()
+                    onDismiss()
+                }) {
+                    Text(
+                        text = stringResource(id = R.string.yes),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            },
+            dismissButton = {
+                Button(onClick = onDismiss) {
+                    Text(
+                        text = stringResource(id = R.string.cancel),
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
-        },
-        dismissButton = {
-            Button(onClick = onDismiss) {
-                Text(
-                    text = stringResource(id = R.string.cancel),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
-    )
+        )
+    }
+
 }
 
 @Composable

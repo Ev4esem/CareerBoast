@@ -23,9 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class JobViewModel @Inject constructor(
     private val getJobsListUseCase : GetJobsListUseCase,
-    private val getJobByIdUseCase : GetJobByIdUseCase,
     private val setFavoriteJobUseCase : SetFavoriteJobUseCase,
-    private val getJobFavoriteListUseCase : GetJobFavoriteListUseCase,
     logService : LogService
 ) : CareerBoastViewModel(logService), EventHandler<JobEvent>, EffectHandler<JobEffect> {
 
@@ -41,9 +39,6 @@ class JobViewModel @Inject constructor(
                 getJobs()
             }
 
-            is JobEvent.SelectedJob -> {
-                getJobById(event.id)
-            }
             is JobEvent.ChangeFavorite -> {
                 changeFavorite(event.job)
             }
@@ -105,38 +100,5 @@ class JobViewModel @Inject constructor(
         }
     }
 
-    private fun getJobById(id : String) {
-        viewModelScope.launch {
-            getJobByIdUseCase(
-                jobId = id
-            ).collectAsResult(
-                onSuccess = { jobDetail ->
-                    _jobUiState.update { currentState ->
-                        currentState.copy(
-                            selectJob = jobDetail,
-                            loadingDetail = false,
-                            errorDetail = null
-                        )
-                    }
-                },
-                onError = { ex, message ->
-                    _jobUiState.update { currentState ->
-                        currentState.copy(
-                            loadingDetail = false,
-                            errorDetail = message
-                        )
-                    }
-                },
-                onLoading = {
-                    _jobUiState.update { currentState ->
-                        currentState.copy(
-                            loadingDetail = true,
-                            errorDetail = null
-                        )
-                    }
-                }
-            )
-        }
-    }
 
 }

@@ -23,6 +23,7 @@ retrofitSerialization = "1.0.0"
 gson = "2.9.0"
 retrofitVersion = "2.9.0"
 coilVersion = "2.6.0"
+moshiVersion = "1.15.0"
 
 
 [libraries]
@@ -44,6 +45,10 @@ androidx-lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lif
 
 # Coil
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilVersion" }
+
+# Moshi
+moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshiVersion" }
+moshi-kotlin-codegen = { group = "com.squareup.moshi", name = "moshi-kotlin-codegen", version.ref = "moshiVersion" }
 
 
 # Compose

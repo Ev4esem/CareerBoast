@@ -3,7 +3,6 @@ package com.example.careerboast.view.screens.job_detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.example.careerboast.domain.repositories.LogService
-import com.example.careerboast.domain.use_cases.job.GetFeedbackListByIdUseCase
 import com.example.careerboast.domain.use_cases.job.GetJobByIdUseCase
 import com.example.careerboast.utils.CareerBoastViewModel
 import com.example.careerboast.utils.EffectHandler
@@ -21,7 +20,6 @@ import javax.inject.Inject
 @HiltViewModel
 class JobDetailViewModel @Inject constructor(
     private val getJobByIdUseCase : GetJobByIdUseCase,
-    private val getFeedbackListByIdUseCase : GetFeedbackListByIdUseCase,
     savedStateHandle : SavedStateHandle,
     logService : LogService
 ) : CareerBoastViewModel(logService), EventHandler<JobDetailEvent>, EffectHandler<JobDetailEffect> {
@@ -35,9 +33,6 @@ class JobDetailViewModel @Inject constructor(
 
     override fun obtainEvent(event : JobDetailEvent) {
         when(event) {
-            is JobDetailEvent.SelectJobDetail -> {
-
-            }
             JobDetailEvent.RefreshData -> {
                 getJobDetailById(jobId)
             }
@@ -61,7 +56,6 @@ class JobDetailViewModel @Inject constructor(
                             error = null
                         )
                     }
-                    getFeedbackListById(jobDetail.id)
                 },
                 onError = { ex, message ->
                     _uiState.update { currentState ->
@@ -84,18 +78,5 @@ class JobDetailViewModel @Inject constructor(
         }
     }
 
-    private fun getFeedbackListById(jobDetailId : String) {
-        viewModelScope.launch {
-            getFeedbackListByIdUseCase(jobDetailId).collectAsResult(
-                onSuccess = { feedbackList ->
-                    _uiState.update { currentState ->
-                        currentState.copy(
-                            feedbackList = feedbackList
-                        )
-                    }
-                }
-            )
-        }
-    }
 
 }

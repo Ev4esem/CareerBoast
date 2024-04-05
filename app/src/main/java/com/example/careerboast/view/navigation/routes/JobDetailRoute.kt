@@ -33,27 +33,11 @@ fun JobDetailRoute(
 
     Log.d("JobDetail", "${uiState.jobDetail}")
 
-    uiState.jobDetail?.let {  jobDetail ->
-        JobDetailScreen(
-            title = jobDetail.title,
-            imageUrl = jobDetail.logoCompany,
-            nameCompany = jobDetail.nameCompany,
-            status = jobDetail.status,
-            data = jobDetail.data,
-            ratingCompany = jobDetail.rating,
-            location = jobDetail.location,
-            currency = jobDetail.currency,
-            compensation = jobDetail.compensation,
-            url = jobDetail.url,
-            review = jobDetail.review,
-            jobType = jobDetail.jobType,
-            qualification = jobDetail.qualifications,
-            startDate = jobDetail.startData,
-            list = uiState.feedbackList,
-            appState = appState
+    JobDetailScreen(
+        uiState = uiState,
+        appState = appState,
+        onEvent = viewModel::obtainEvent
         )
-    }
-
 
 
 }

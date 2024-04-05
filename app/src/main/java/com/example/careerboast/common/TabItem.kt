@@ -8,5 +8,4 @@ data class TabItem(
     val unSelected : Color,
     val textSelected : Color,
     val textUnSelected : Color,
-    val screen : String
 )
