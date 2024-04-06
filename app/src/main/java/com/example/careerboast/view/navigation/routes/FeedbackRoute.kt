@@ -21,6 +21,4 @@ fun FeedbackRoute(
         appState = appState,
         onEvent = viewModel::obtainEvent
     )
-
-
 }

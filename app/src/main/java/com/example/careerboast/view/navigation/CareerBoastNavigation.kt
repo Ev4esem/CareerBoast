@@ -22,24 +22,22 @@ import com.example.careerboast.view.navigation.routes.JobToFavoriteRoute
 import com.example.careerboast.view.navigation.routes.LogInRoute
 import com.example.careerboast.view.navigation.routes.MentorDetailRoute
 import com.example.careerboast.view.navigation.routes.MentorToFavoriteRoute
+import com.example.careerboast.view.navigation.routes.SignInRoute
 import com.example.careerboast.view.navigation.routes.SpecialitiesRoute
 import com.example.careerboast.view.screens.feedback.WebViewContainer
 
 
-fun buildInterviewListRoute(argument: String) = "${Screen.INTERVIEWS_SCREEN.route}/$argument"
+fun buildInterviewListRoute(argument : String) = "${Screen.INTERVIEWS_SCREEN.route}/$argument"
 
-fun buildInterviewRoute(interviewId : String, time : String) = "${Screen.INTERVIEW_SCREEN.route}/$interviewId/$time"
+fun buildInterviewRoute(interviewId : String, time : String) =
+    "${Screen.INTERVIEW_SCREEN.route}/$interviewId/$time"
 
-fun buildJobDetailRoute(argument: String) = "${Screen.DETAILS_JOB_SCREEN.route}/$argument"
+fun buildJobDetailRoute(argument : String) = "${Screen.DETAILS_JOB_SCREEN.route}/$argument"
 
-fun buildMentorDetailRoute(argument: String) = "${Screen.DETAILS_MENTOR_SCREEN.route}/$argument"
+fun buildMentorDetailRoute(argument : String) = "${Screen.DETAILS_MENTOR_SCREEN.route}/$argument"
 
+fun buildWebViewRoute(url : String) = "${Screen.WEB_VIEW_SCREEN.route}/$url"
 
-fun buildFeedbackRoute(
-    answerResult : String
-) : String {
-    return "${Screen.FEEDBACK_SCREEN.route}/$answerResult"
-}
 
 fun NavGraphBuilder.screens(
     navController : NavController,
@@ -54,7 +52,9 @@ fun NavGraphBuilder.screens(
             appState = appState
         )
     }
-
+    composable(route = Screen.SIGN_IN_SCREEN.route) {
+        SignInRoute(appState = appState)
+    }
     composable(route = Screen.SPECIALITY_SCREEN.route) {
         SpecialitiesRoute(navController = navController, drawerState)
     }
@@ -80,7 +80,7 @@ fun NavGraphBuilder.screens(
     }
     composable(
         route = Screen.WEB_VIEW_SCREEN.route + "/{$ARTICLE_URL}",
-        ) { backStackEntry ->
+    ) { backStackEntry ->
 
         val articleUrl = backStackEntry.arguments?.getString(ARTICLE_URL) ?: ""
 
@@ -88,7 +88,7 @@ fun NavGraphBuilder.screens(
 
     }
     composable(
-        route = Screen.FEEDBACK_SCREEN.route + "/{$ANSWER_STATE}",
+        route = Screen.FEEDBACK_SCREEN.route,
     ) {
         FeedbackRoute(appState = appState)
     }
@@ -107,7 +107,6 @@ fun NavGraphBuilder.screens(
         MentorDetailRoute(appState = appState)
 
     }
-
 
 
 }

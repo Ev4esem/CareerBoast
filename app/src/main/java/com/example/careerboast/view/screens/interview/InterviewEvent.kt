@@ -6,13 +6,16 @@ sealed interface InterviewEvent {
 
 
     data class SelectAnswer(
-        val questionId: String,
         val selectedAnswerIndex: Int
     ) : InterviewEvent
 
     data object FinishedInterview : InterviewEvent
 
-    data object SubmitAnswer : InterviewEvent
+    data class SubmitAnswer(
+       val selectedAnswerId : Int?,
+       val questionId : String
+    ) : InterviewEvent
+
 
     data class ChangeFinishDialogState(
         val isVisible: Boolean,

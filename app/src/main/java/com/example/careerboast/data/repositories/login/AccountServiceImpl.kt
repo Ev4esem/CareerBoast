@@ -2,6 +2,7 @@ package com.example.careerboast.data.repositories.login
 
 import com.example.careerboast.domain.model.login.UserAccount
 import com.example.careerboast.domain.repositories.login.AccountService
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.channels.awaitClose
@@ -42,6 +43,12 @@ class AccountServiceImpl @Inject constructor (
     override suspend fun register(email : String, password : String) : Flow<AuthResult> = flow {
         val authUser = auth.createUserWithEmailAndPassword(email,password).await()
         emit(authUser)
+    }
+
+    override suspend fun signIn(email : String, password : String) : Flow<AuthResult> = flow {
+
+        val signInUser = auth.signInWithEmailAndPassword(email, password).await()
+        emit(signInUser)
     }
 
 

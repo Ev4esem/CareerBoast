@@ -34,7 +34,6 @@ fun AppBar(
     navigationIcon: (@Composable () -> Unit)? = null,
 ) {
 
-    val coroutineScope = rememberCoroutineScope()
 
     TopAppBar(
 

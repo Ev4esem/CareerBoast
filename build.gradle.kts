@@ -14,7 +14,6 @@ buildscript {
 
         classpath(libs.kotlin.gradle)
         classpath (libs.google.dagger)
-        classpath(libs.kotlin.serialization)
     }
 
 }

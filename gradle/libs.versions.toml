@@ -2,31 +2,36 @@
 agp = "8.3.1"
 kotlin = "1.9.0"
 coreKtx = "1.12.0"
-kt = "1.9.0"
+kt = "1.9.23"
 
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
-lifecycleRuntimeKtx = "2.6.1"
+lifecycleRuntimeKtx = "2.7.0"
 lifecycleRuntimeCompose = "2.7.0"
-activityCompose = "1.7.0"
-composeBom = "2023.08.00"
-firebaseBom = "32.7.4"
+activityCompose = "1.8.2"
+composeBom = "2024.04.00"
+firebaseBom = "32.8.0"
 googleVersion = "4.4.1"
-navVersion = "2.7.6"
+navVersion = "2.7.7"
 jetbrainsKotlinJvm = "1.9.0"
 firebaseCrashlyticsVersion = "2.9.9"
-hiltVersion = "2.48"
-hiltNavigationComposeVersion = "1.0.0"
-#kspVersion = "1.8.10-1.0.9"
+hiltVersion = "2.49"
+hiltNavigationComposeVersion = "1.2.0"
 retrofitSerialization = "1.0.0"
-gson = "2.9.0"
+gson = "2.10.1"
 retrofitVersion = "2.9.0"
 coilVersion = "2.6.0"
 moshiVersion = "1.15.0"
-
+webViewVersion = "0.34.0"
 
 [libraries]
+
+
+# WebView
+
+webview = { group = "com.google.accompanist", name = "accompanist-webview", version.ref = "webViewVersion" }
+
 # Kotlin
 
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -91,5 +96,4 @@ androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "googleVersion" }
 jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
-#googleKsp = { id = "com.google.devtools.ksp", version.ref = "kspVersion" }
 firebaseCrashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebaseCrashlyticsVersion" }

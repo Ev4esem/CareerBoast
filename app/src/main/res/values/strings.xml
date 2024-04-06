@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Common -->
-    <string name="app_name">CareerBoast</string>
+    <string name="app_name">CareerBoost</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="apply">Apply</string>
@@ -33,9 +33,12 @@
     <string name="log_out">Log out</string>
 
     <!-- Log in -->
-    <string name="register">Register</string>
     <string name="empty_password_error">Password cannot be empty.</string>
+    <string name="sign_in">Sign in</string>
     <string name="sign_up">Sign up</string>
+    <string name="create_account">Create new account</string>
+    <string name="don_t_have_account">Don\'t have an account?</string>
+    <string name="have_account">Have an account?</string>
 
     <!-- Jobs -->
     <string name="internships_and_jobs">Internships and Jobs</string>

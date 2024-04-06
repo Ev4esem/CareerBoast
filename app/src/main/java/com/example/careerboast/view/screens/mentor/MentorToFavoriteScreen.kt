@@ -22,6 +22,7 @@ import com.example.careerboast.ui.theme.Grey
 import com.example.careerboast.ui.theme.LightGreyBackground
 import com.example.careerboast.ui.theme.White
 import com.example.careerboast.view.navigation.drawer.AppBar
+import com.example.careerboast.view.screens.job.Internship
 import com.example.careerboast.view.screens.mentor.favoritementor.FavoriteMentorUiState
 
 
@@ -40,6 +41,7 @@ fun MentorToFavoriteScreen(
             unSelected = LightGreyBackground,
             textSelected = Black,
             textUnSelected = Grey,
+            screen = Internship.Favorite
         ),
         TabItem(
             title = R.string.favorite,
@@ -47,6 +49,7 @@ fun MentorToFavoriteScreen(
             unSelected = LightGreyBackground,
             textSelected = Black,
             textUnSelected = Grey,
+            screen = Internship.Jobs
         )
     )
 

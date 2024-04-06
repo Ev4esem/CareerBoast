@@ -6,7 +6,6 @@ plugins {
     id("kotlin-kapt")
     id ("dagger.hilt.android.plugin")
     id("kotlin-parcelize")
-    id("kotlinx-serialization")
 }
 
 android {
@@ -46,7 +45,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.11"
     }
     packaging {
         resources {
@@ -61,6 +60,9 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlin.serialization)
 
+    // WebView
+    implementation(libs.webview)
+
     // Compose
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
@@ -74,7 +76,6 @@ dependencies {
 
     // Moshi
     implementation(libs.moshi.kotlin)
-    //noinspection KaptUsageInsteadOfKsp
     kapt(libs.moshi.kotlin.codegen)
 
     //Retrofit

@@ -1,8 +1,10 @@
 package com.example.careerboast.view.screens.feedback
 
+import android.annotation.SuppressLint
 import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,10 +30,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
@@ -43,12 +47,17 @@ import com.example.careerboast.common.composable.CareerLoadingScreen
 import com.example.careerboast.common.ext.basisPadding
 import com.example.careerboast.domain.model.interviews.StudyMaterial
 import com.example.careerboast.ui.theme.Black
+import com.example.careerboast.ui.theme.Blue
 import com.example.careerboast.ui.theme.DarkBlue
 import com.example.careerboast.ui.theme.LavenderElement
 import com.example.careerboast.ui.theme.LavenderElementLight
+import com.example.careerboast.ui.theme.LavenderText
 import com.example.careerboast.utils.SPECIALITY_ID
 import com.example.careerboast.view.navigation.CareerBoastAppState
 import com.example.careerboast.view.navigation.Screen
+import com.example.careerboast.view.navigation.buildWebViewRoute
+import com.google.accompanist.web.WebView
+import com.google.accompanist.web.rememberWebViewState
 
 @Composable
 fun FeedbackScreen(
@@ -57,6 +66,9 @@ fun FeedbackScreen(
     onEvent : (FeedbackEvent) -> Unit
 ) {
 
+    BackHandler {
+        appState.clearAndNavigate(Screen.SPECIALITY_SCREEN.route)
+    }
 
     if (! uiState.error.isNullOrBlank()) {
         CareerErrorScreen(
@@ -67,20 +79,22 @@ fun FeedbackScreen(
     } else if (uiState.loading) {
         CareerLoadingScreen()
     } else {
+
+
+
         Scaffold(
             topBar = {
                 TopBarFeedback(
                     correctAnswersCount = uiState.correctAnswer,
                     totalQuestionsCount = uiState.correctAnswer + uiState.incorrectAnswer,
                     onClick = {
-                        appState.navigateAndPopUp(
-                            route = Screen.INTERVIEWS_SCREEN.route + SPECIALITY_ID,
-                            popUp = Screen.FEEDBACK_SCREEN.route
-                        )
+                        appState.clearAndNavigate(Screen.SPECIALITY_SCREEN.route)
                     }
                 )
             }
         ) {
+
+            Spacer(modifier = Modifier.height(10.dp))
 
             Column(
                 modifier = Modifier.padding(it),
@@ -97,7 +111,7 @@ fun FeedbackScreen(
                         count = uiState.correctAnswer,
                         contentDescription = R.string.correct
                     )
-
+                    Spacer(modifier = Modifier.width(12.dp))
                     CountAnswer(
                         icon = R.drawable.cross,
                         title = R.string.incorrect,
@@ -107,38 +121,41 @@ fun FeedbackScreen(
 
                 }
 
-            }
 
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(36.dp)
-            )
-
-            if (uiState.studyList.isNotEmpty()) {
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .basisPadding(),
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.recommended_study),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
                 Spacer(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(20.dp)
-                )
-                StudyMaterialList(
-                    list = uiState.studyList,
-                    appState = appState
+                        .height(36.dp)
                 )
 
+                if (uiState.studyList.isNotEmpty()) {
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .basisPadding(),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.recommended_study),
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(20.dp)
+                    )
+                    StudyMaterialList(
+                        list = uiState.studyList,
+                        appState = appState
+                    )
+
+                }
+
             }
+
+
 
         }
     }
@@ -155,15 +172,12 @@ fun CountAnswer(
 ) {
 
     Surface(
-        shape = MaterialTheme.shapes.medium,
-        color = LavenderElementLight,
+        shape = MaterialTheme.shapes.small,
         border = BorderStroke(
             width = 1.dp,
             color = LavenderElement
         ),
 
-        modifier = Modifier
-            .clip(MaterialTheme.shapes.medium)
     ) {
         Row(
             modifier = Modifier
@@ -173,7 +187,9 @@ fun CountAnswer(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Row {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
                 Icon(
                     painter = painterResource(id = icon),
@@ -181,15 +197,9 @@ fun CountAnswer(
                 )
                 Spacer(modifier = Modifier.width(2.dp))
                 Text(
-                    text = "$count",
+                    text = "$count" + " " + stringResource(id = title),
                     style = MaterialTheme.typography.bodyLarge
                 )
-
-                Text(
-                    text = stringResource(id = title),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-
 
             }
 
@@ -222,11 +232,13 @@ fun TopBarFeedback(
         }
 
         LinearProgressIndicator(
-            progress = progress,
+            progress = { progress },
             modifier = Modifier
                 .fillMaxWidth()
                 .basisPadding(),
-            trackColor = LavenderElement.copy(alpha = 0.12f)
+            color = Blue,
+            strokeCap = StrokeCap.Round,
+            trackColor = LavenderElement,
         )
 
     }
@@ -253,7 +265,9 @@ fun StudyMaterialList(
                 title = item.title,
                 task = item.task,
                 onClick = {
-                    appState.navigate(Screen.WEB_VIEW_SCREEN.route + "/${item.url}")
+
+                    appState.navigate(buildWebViewRoute(item.url))
+
                 }
             )
 
@@ -273,7 +287,9 @@ fun StudyItem(
 
     Column(
         modifier = modifier
-            .clickable { onClick() }
+            .clickable {
+                onClick()
+            }
     ) {
 
         AsyncImage(
@@ -307,19 +323,35 @@ fun StudyItem(
 
 }
 
+@SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun WebViewContainer(url : String) {
-    AndroidView(
-        modifier = Modifier.fillMaxWidth(),
-        factory = { context ->
-            WebView(context).apply {
-                layoutParams = ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-                webViewClient = WebViewClient()
-                loadUrl(url)
-            }
-        }
+    // todo Не поддерживается
+    val state = rememberWebViewState(url)
+
+    WebView(
+        state = state,
+        onCreated = { it.settings.javaScriptEnabled = true }
     )
+}
+
+@Preview
+@Composable
+private fun FeedbackScreenPrev() {
+
+    CountAnswer(icon = R.drawable.tick, title = R.string.correct, count = 5, contentDescription = R.string.correct)
+
+    val progress = 4.toFloat() / 10.toFloat()
+
+
+    LinearProgressIndicator(
+        progress = { progress },
+        modifier = Modifier
+            .fillMaxWidth()
+            .basisPadding(),
+        color = Blue,
+        strokeCap = StrokeCap.Round,
+        trackColor = LavenderElement.copy(alpha = 0.12f),
+    )
+
 }

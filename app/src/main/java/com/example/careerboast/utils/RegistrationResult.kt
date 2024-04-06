@@ -62,7 +62,7 @@ fun handleAuthException(exception : Throwable?) : String {
     return when(exception) {
         is FirebaseAuthUserCollisionException -> "Пользователь с таким email уже существует"
         is FirebaseAuthWeakPasswordException -> "Пароль слишком слабый. Пожалуйста, используйте более надежный пароль."
-        is FirebaseAuthInvalidCredentialsException -> "Пожалуйста, введите корректный адрес электронной почты."
+        is FirebaseAuthInvalidCredentialsException -> "Неверный email или пароль. Пожалуйста, попробуйте еще раз."
         else -> "Произошла ошибка при регистрации. Пожалуйста, попробуйте еще раз."
     }
 }

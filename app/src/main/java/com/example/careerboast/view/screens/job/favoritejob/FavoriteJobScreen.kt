@@ -6,21 +6,22 @@ import com.example.careerboast.common.composable.CareerLoadingScreen
 import com.example.careerboast.view.navigation.CareerBoastAppState
 import com.example.careerboast.view.screens.job.JobEvent
 import com.example.careerboast.view.screens.job.JobFavoriteList
+import com.example.careerboast.view.screens.job.JobUiState
 
 @Composable
 fun FavoriteJobScreen(
     onNavigation : (String) -> Unit,
-    uiState : FavoriteUiState,
+    uiState : JobUiState,
     onEvent : (JobEvent) -> Unit
 ) {
-    if (! uiState.error.isNullOrBlank()) {
+    if (! uiState.errorFavorite.isNullOrBlank()) {
         CareerErrorScreen(
             errorText = uiState.error.toString(),
             onClickRetry = {
                 onEvent(JobEvent.RefreshData)
             }
         )
-    } else if (uiState.loading) {
+    } else if (uiState.loadingFavorite) {
         CareerLoadingScreen()
     } else {
         JobFavoriteList(
@@ -28,6 +29,5 @@ fun FavoriteJobScreen(
             onEvent = onEvent,
             onNavigation = onNavigation
         )
-
     }
 }

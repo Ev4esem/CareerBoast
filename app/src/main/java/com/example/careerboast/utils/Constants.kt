@@ -18,4 +18,4 @@ const val JOB_ID = "job_id"
 const val MENTOR_ID = "mentor_id"
 
 
-const val ANSWER_STATE = "study_list"
+const val ANSWER_STATE = "answerResult"

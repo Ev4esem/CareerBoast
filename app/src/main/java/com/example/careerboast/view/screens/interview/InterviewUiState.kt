@@ -6,8 +6,8 @@ import com.example.careerboast.domain.model.interviews.Question
 data class InterviewUiState(
     val selectQuestion : List<Question> = emptyList(),
     val answerResult : List<AnswerResult> = emptyList(),
+    val currentAnswerId : Int? = null,
     val currentQuestionIndex : Int = 0,
-    val currentAnswerIndex : Int = 0,
     val nextQuestion : Question? = null,
     val error : String? = null,
     val loading : Boolean = false,

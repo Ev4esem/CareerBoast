@@ -22,7 +22,7 @@ fun LogInRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     ObserveEffect(viewModel.effectFlow) { effect ->
-        when(effect) {
+        when (effect) {
             is LoginEffect.ShowToast -> {
                 Toast.makeText(context, effect.message, Toast.LENGTH_LONG).show()
             }
@@ -30,8 +30,10 @@ fun LogInRoute(
     }
 
     LoginScreen(
-        openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route,popUp) },
+        openAndPopUp = { route, popUp -> appState.navigateAndPopUp(route, popUp) },
         viewModel = viewModel,
-        uiState = uiState)
+        uiState = uiState,
+        appState = appState
+    )
 
 }

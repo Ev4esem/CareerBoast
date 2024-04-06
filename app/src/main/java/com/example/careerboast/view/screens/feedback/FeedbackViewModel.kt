@@ -31,24 +31,23 @@ class FeedbackViewModel @Inject constructor(
     logService : LogService
 ) : CareerBoastViewModel(logService), EventHandler<FeedbackEvent> {
 
+    companion object {
+        const val TAG = "FeedbackViewModel"
+    }
+
     private val _uiState = MutableStateFlow(FeedbackUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val studyList : String = checkNotNull(savedStateHandle[ANSWER_STATE])
+    private val answerResult: List<AnswerResult> = checkNotNull(savedStateHandle[ANSWER_STATE])
 
-    private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-    private val type = Types.newParameterizedType(List::class.java, AnswerResult::class.java)
-    private val jsonAdapter = moshi.adapter<List<AnswerResult>>(type)
 
-    private val userObject = jsonAdapter.fromJson(studyList)
-
-    private val questionIds = userObject
-        ?.filter { it.answerState == AnswerResult.AnswerState.Wrong }
-        ?.map { it.id }
+    private val questionIds = answerResult
+        .filter { it.answerState == AnswerResult.AnswerState.Wrong }
+        .map { it.id }
     private val correctAnswerCount =
-        userObject?.count { it.answerState == AnswerResult.AnswerState.Correct }
+        answerResult.count { it.answerState == AnswerResult.AnswerState.Correct }
     private val inCorrectAnswerCount =
-        userObject?.count { it.answerState == AnswerResult.AnswerState.Wrong }
+        answerResult.count { it.answerState == AnswerResult.AnswerState.Wrong }
 
 
     override fun obtainEvent(event : FeedbackEvent) {
@@ -66,13 +65,13 @@ class FeedbackViewModel @Inject constructor(
     }
 
     init {
-
+        Log.d(TAG, "$answerResult: ")
         getStudyMaterialList(questionIds)
 
         _uiState.update { currentState ->
             currentState.copy(
-                correctAnswer = correctAnswerCount ?: 0,
-                incorrectAnswer = inCorrectAnswerCount ?: 0
+                correctAnswer = correctAnswerCount,
+                incorrectAnswer = inCorrectAnswerCount
             )
         }
     }

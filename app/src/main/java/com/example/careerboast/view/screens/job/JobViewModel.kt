@@ -23,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class JobViewModel @Inject constructor(
     private val getJobsListUseCase : GetJobsListUseCase,
+    private val getJobFavoriteListUseCase : GetJobFavoriteListUseCase,
     private val setFavoriteJobUseCase : SetFavoriteJobUseCase,
     logService : LogService
 ) : CareerBoastViewModel(logService), EventHandler<JobEvent>, EffectHandler<JobEffect> {
@@ -42,12 +43,79 @@ class JobViewModel @Inject constructor(
             is JobEvent.ChangeFavorite -> {
                 changeFavorite(event.job)
             }
+            is JobEvent.ChangeTabs -> {
+                changeType(event.tab)
+            }
 
         }
     }
 
     init {
         getJobs()
+    }
+    private fun changeType(tab : Internship) {
+
+        if (tab == Internship.Favorite) {
+            getJobsFavorite()
+        } else {
+            _jobUiState.update {  currentState ->
+                currentState.copy(
+                    tab = tab
+                )
+            }
+        }
+
+    }
+
+
+    private fun getJobsFavorite() {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            getJobFavoriteListUseCase().collectAsResult(
+                onSuccess = { jobs ->
+                    _jobUiState.update { currentState ->
+                        currentState.copy(
+                            favoriteList = jobs,
+                            loadingFavorite  = false,
+                            errorFavorite = null
+                        )
+                    }
+                },
+                onError = { ex, message ->
+                    _jobUiState.update { currentState ->
+                        currentState.copy(
+                            loadingFavorite = false,
+                            errorFavorite = message
+                        )
+                    }
+                    sendEffect(JobEffect.ShowToast(message.toString()))
+                },
+                onLoading = {
+                    _jobUiState.update { currentState ->
+                        currentState.copy(
+                            loadingFavorite = true,
+                            errorFavorite = null
+                        )
+                    }
+                }
+            )
+        }
+    }
+
+    private fun changeFavorite(job: Job) {
+        viewModelScope.launch {
+            setFavoriteJobUseCase(job).collectAsResult(
+                onSuccess = { newValue ->
+                    _jobUiState.update { currentState ->
+                        currentState.copy(
+                            favoriteList = currentState.favoriteList
+                                // todo !it.isFavorite
+                                .map { if (it.id == job.id) it.copy(favorite = newValue) else it },
+                        )
+                    }
+                }
+            )
+        }
     }
 
     private fun getJobs() {
@@ -83,22 +151,5 @@ class JobViewModel @Inject constructor(
             )
         }
     }
-
-
-    private fun changeFavorite(job: Job) {
-        viewModelScope.launch {
-            setFavoriteJobUseCase(job).collectAsResult(
-                onSuccess = { newValue ->
-                    _jobUiState.update { currentState ->
-                        currentState.copy(
-                            jobs = currentState.jobs.toMutableList()
-                                .map { if (it.id == job.id) it.copy(favorite = newValue) else it },
-                        )
-                    }
-                }
-            )
-        }
-    }
-
 
 }

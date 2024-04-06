@@ -51,7 +51,6 @@ fun CareerErrorScreen(
                 contentDescription = stringResource(id = R.string.generic_error)
             )
             Spacer(modifier = Modifier.height(8.dp))
-            // todo
             Text(
                 text = errorText,
                 style = MaterialTheme.typography.titleMedium,

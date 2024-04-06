@@ -35,11 +35,6 @@ class InterviewViewModel @Inject constructor(
 
     override val effectChannel : Channel<InterviewEffect> = Channel()
 
-
-    private val _answerState = MutableStateFlow<List<AnswerResult>>(emptyList())
-    val answerState = _answerState.asStateFlow()
-
-
     private val _interviewUiState = MutableStateFlow(InterviewUiState())
     val interviewUiState = _interviewUiState.asStateFlow()
 
@@ -61,15 +56,19 @@ class InterviewViewModel @Inject constructor(
     override fun obtainEvent(event : InterviewEvent) {
         when (event) {
             is InterviewEvent.SelectAnswer -> {
-                answerQuestion(event.questionId, event.selectedAnswerIndex)
+                answerQuestion(event.selectedAnswerIndex)
             }
 
             InterviewEvent.RefreshData -> {
                 getQuestions(interviewId)
             }
 
-            InterviewEvent.SubmitAnswer -> {
-                nextQuestion()
+            is InterviewEvent.SubmitAnswer -> {
+                nextQuestion(
+                    event.questionId,
+                    event.selectedAnswerId
+                )
+
             }
 
             InterviewEvent.FinishedInterview -> {
@@ -169,20 +168,23 @@ class InterviewViewModel @Inject constructor(
         }
     }
 
-    private fun answerQuestion(questionId : String, selectedAnswerId : Int?) {
+    private fun answerQuestion(selectedAnswerId : Int?) {
         viewModelScope.launch {
-
-            val answerResultList = _interviewUiState.value.userAnswers
-
-            answerResultList.add(Pair(questionId, selectedAnswerId))
+            _interviewUiState.update { currentState ->
+                currentState.copy(
+                    currentAnswerId = selectedAnswerId
+                )
+            }
         }
     }
 
     private fun processInterviewResults() {
-        val answerResultList = _interviewUiState.value.userAnswers
+        viewModelScope.launch {
+            val answerResultList = _interviewUiState.value.userAnswers
 
-        val answerResult = answerResultList.toAnswerResult()
-        _answerState.value = answerResult
+            val answerResult = answerResultList.toAnswerResult()
+            sendEffect(InterviewEffect.FinishInterview(answerResult))
+        }
     }
 
     private fun List<Pair<String, Int?>>.toAnswerResult() : List<AnswerResult> {
@@ -197,7 +199,10 @@ class InterviewViewModel @Inject constructor(
         }
     }
 
-    private fun nextQuestion() {
+    private fun nextQuestion(
+        questionId : String,
+        selectedAnswerId : Int?
+    ) {
         viewModelScope.launch {
             val newIndex =
                 (_interviewUiState.value.currentQuestionIndex + 1).coerceAtMost(_interviewUiState.value.selectQuestion.size - 1)
@@ -206,11 +211,15 @@ class InterviewViewModel @Inject constructor(
             val nextQuestion =
                 if (hasNextQuestion) _interviewUiState.value.selectQuestion[newIndex] else null
 
+            val answerResultList = _interviewUiState.value.userAnswers
+            answerResultList.add(Pair(questionId, selectedAnswerId))
+
             _interviewUiState.update { currentState ->
                 currentState.copy(
                     currentQuestionIndex = newIndex,
                     finishDialogIsVisible = ! hasNextQuestion,
-                    nextQuestion = nextQuestion
+                    nextQuestion = nextQuestion,
+                    currentAnswerId = null
                 )
             }
         }

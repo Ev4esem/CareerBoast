@@ -9,13 +9,12 @@ sealed class Screen(
     object INTERVIEWS_SCREEN : Screen("InterviewsScreen")
     object INTERVIEW_SCREEN : Screen("InterviewScreen")
     object MENTORS_SCREEN : Screen("MentorsScreen")
-    object INTERSHIPS_SCREEN : Screen("IntershipsScreen")
     object SPECIALITY_SCREEN : Screen("SpecialityScreen")
     object FEEDBACK_SCREEN : Screen("FeedbackScreen")
     object DETAILS_MENTOR_SCREEN : Screen("DetailsMentorScreen")
     object DETAILS_JOB_SCREEN : Screen("FeedbackScreen")
-    object FAVORITE_JOB_SCREEN : Screen("FavoriteScreen")
     object JOBS_TO_FAVORITE_SCREEN : Screen("jobsToFavoriteScreen")
     object WEB_VIEW_SCREEN : Screen("web_view_screen")
+    object SIGN_IN_SCREEN : Screen("sign_in")
 
 }

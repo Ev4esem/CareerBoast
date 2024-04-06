@@ -33,7 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -63,7 +63,6 @@ import com.example.careerboast.ui.theme.LightGreyBackground
 import com.example.careerboast.ui.theme.White
 import com.example.careerboast.view.navigation.drawer.AppBar
 import com.example.careerboast.view.screens.job.favoritejob.FavoriteJobScreen
-import com.example.careerboast.view.screens.job.favoritejob.FavoriteUiState
 
 @Composable
 fun JobScreen(
@@ -89,8 +88,6 @@ fun JobScreen(
         )
 
     }
-
-
 }
 
 
@@ -98,7 +95,6 @@ fun JobScreen(
 fun Jobs_to_FavoriteJobs(
     drawerState : DrawerState,
     uiState : JobUiState,
-    favoriteUiState : FavoriteUiState,
     onEvent : (JobEvent) -> Unit,
     onNavigation : (String) -> Unit
 ) {
@@ -111,6 +107,7 @@ fun Jobs_to_FavoriteJobs(
             unSelected = LightGreyBackground,
             textSelected = Black,
             textUnSelected = Grey,
+            screen = Internship.Jobs
         ),
         TabItem(
             title = R.string.favorite,
@@ -118,6 +115,7 @@ fun Jobs_to_FavoriteJobs(
             unSelected = LightGreyBackground,
             textSelected = Black,
             textUnSelected = Grey,
+            screen = Internship.Favorite
         )
     )
 
@@ -146,7 +144,6 @@ fun Jobs_to_FavoriteJobs(
                 tabItems = tabItems,
                 uiState = uiState,
                 onEvent = onEvent,
-                favoriteUiState = favoriteUiState,
                 onNavigation = onNavigation
             )
 
@@ -155,33 +152,45 @@ fun Jobs_to_FavoriteJobs(
 
 }
 
+
+// todo Использовать 1 UiState для экрана job и favorite
+
+// todo Поменял механизм добавил обработку по табам,
+//  если перехожу на таб Favorite то кидаю новый запрос
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TabLayoutJob(
     tabItems : List<TabItem>,
     uiState : JobUiState,
-    favoriteUiState : FavoriteUiState,
     onEvent : (JobEvent) -> Unit,
     onNavigation : (String) -> Unit
 ) {
-    Column {
 
-        var selectedTabIndex by remember {
-            mutableIntStateOf(0)
-        }
+    var selectedTabIndex by remember {
+        mutableStateOf(uiState.tab.ordinal)
+    }
+
+    Column {
 
         val pagerState = rememberPagerState {
             tabItems.size
         }
 
-        LaunchedEffect(selectedTabIndex) {
+        LaunchedEffect(uiState.tab) {
             pagerState.animateScrollToPage(selectedTabIndex)
         }
 
         LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress) {
 
             if (! pagerState.isScrollInProgress) {
-                selectedTabIndex = pagerState.currentPage
+
+                val newTab = when(pagerState.currentPage) {
+                    0 -> Internship.Jobs
+                    1 -> Internship.Favorite
+                    else ->  throw IllegalStateException("Unexpected tab index: ${pagerState.currentPage}")
+                }
+
+                onEvent(JobEvent.ChangeTabs(newTab))
             }
         }
 
@@ -200,7 +209,7 @@ fun TabLayoutJob(
                 .clip(RoundedCornerShape(10.dp))
         ) {
 
-            tabItems.forEachIndexed { index, item ->
+            tabItems.forEachIndexed { index ,item ->
                 Tab(
                     selected = index == selectedTabIndex,
                     onClick = {
@@ -210,14 +219,14 @@ fun TabLayoutJob(
                         .height(48.dp)
                         .padding(horizontal = 16.dp)
                         .background(
-                            color = if (selectedTabIndex == index) item.selected else item.unSelected,
+                            color = if (uiState.tab.ordinal == index) item.selected else item.unSelected,
                             shape = RoundedCornerShape(8.dp)
                         )
                         .padding(8.dp),
                     text = {
                         Text(
                             text = stringResource(item.title),
-                            color = if (selectedTabIndex == index) item.textSelected else item.textUnSelected,
+                            color = if (uiState.tab.ordinal == index) item.textSelected else item.textUnSelected,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                         )
                     }
@@ -232,26 +241,36 @@ fun TabLayoutJob(
                 .fillMaxWidth()
                 .weight(1f)
         ) { index ->
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                when (index) {
-                    0 -> {
-                        JobScreen(
-                            uiState = uiState,
-                            onEvent = onEvent,
-                            onNavigation = onNavigation
-                        )
-                    }
 
-                    1 -> {
-                        FavoriteJobScreen(
-                            uiState = favoriteUiState,
-                            onEvent = onEvent,
-                            onNavigation = onNavigation
-                        )
-                    }
+            val newTab = when(index) {
+                0 -> Internship.Jobs
+                1 -> Internship.Favorite
+                else ->  throw IllegalStateException("Unexpected tab index: ${pagerState.currentPage}")
+            }
+            selectedTabIndex = index
+            onEvent(JobEvent.ChangeTabs(newTab))
+
+
+        }
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            when (uiState.tab) {
+
+                Internship.Jobs -> {
+                    JobScreen(
+                        uiState = uiState,
+                        onEvent = onEvent,
+                        onNavigation = onNavigation
+                    )
+                }
+                Internship.Favorite -> {
+                    FavoriteJobScreen(
+                        uiState = uiState,
+                        onEvent = onEvent,
+                        onNavigation = onNavigation
+                    )
                 }
             }
         }

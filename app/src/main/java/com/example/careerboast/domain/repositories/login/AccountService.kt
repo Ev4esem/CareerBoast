@@ -1,6 +1,7 @@
 package com.example.careerboast.domain.repositories.login
 
 import com.example.careerboast.domain.model.login.UserAccount
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import kotlinx.coroutines.flow.Flow
 
@@ -14,6 +15,7 @@ interface AccountService {
 
     suspend fun register(email: String, password: String) : Flow<AuthResult>
 
+    suspend fun signIn(email: String, password: String) : Flow<AuthResult>
 
     suspend fun signOut()
 
