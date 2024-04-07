@@ -1,111 +1,121 @@
 package com.example.careerboast.view.screens.interview_list
 
-import android.util.Log
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
-import coil.request.ImageRequest
 import com.example.careerboast.R
-import com.example.careerboast.common.composable.BackButtonBasic
 import com.example.careerboast.common.composable.CareerErrorScreen
 import com.example.careerboast.common.composable.CareerLoadingScreen
-import com.example.careerboast.common.ext.basisPadding
 import com.example.careerboast.domain.model.interviews.Interview
 import com.example.careerboast.ui.theme.Black
 import com.example.careerboast.ui.theme.DarkBlue
+import com.example.careerboast.utils.ShimmerBrush
 import com.example.careerboast.view.navigation.CareerBoastAppState
-import com.example.careerboast.view.navigation.Screen
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InterviewListScreen(
-    uiState : InterviewListUiState,
-    onEvent : (InterviewListEvent) -> Unit,
-    appState : CareerBoastAppState,
-    onNavigation : (String, String) -> Unit,
+    uiState: InterviewListUiState,
+    onEvent: (InterviewListEvent) -> Unit,
+    appState: CareerBoastAppState,
+    onNavigation: (String, String) -> Unit,
 ) {
-
-    Column {
-        BackButtonBasic(
-            onBackClick = {
-                appState.popUp()
-            },
-            modifier = Modifier
-                .basisPadding(),
-            icon = R.drawable.action_back
-        )
-        Text(
-            text = stringResource(id = R.string.choose_interview),
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.basisPadding(),
-            color = Black
-        )
-        if (!uiState.errorList.isNullOrBlank()) {
-            CareerErrorScreen(
-                errorText = uiState.errorList,
-                onClickRetry = {
-                    onEvent(InterviewListEvent.RefreshData)
-                }
-            )
-        } else if (uiState.interviewListLoading) {
-            CareerLoadingScreen()
-        } else {
-            InterviewList(
-                interviewList = uiState.selectSpeciality,
-                onNavigation = onNavigation
+    Scaffold(
+        topBar = {
+            MediumTopAppBar(
+                title = {
+                    Text(
+                        modifier = Modifier,
+                        text = stringResource(id = R.string.choose_interview),
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Black
+                    )
+                },
+                navigationIcon = {
+                    IconButton(
+                        onClick = appState::popUp,
+                    ) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                            contentDescription = null,
+                        )
+                    }
+                },
             )
         }
-
-
-
+    ) {
+        Column(
+            modifier = Modifier.padding(it),
+        ) {
+            if (!uiState.errorList.isNullOrBlank()) {
+                CareerErrorScreen(
+                    errorText = uiState.errorList,
+                    onClickRetry = {
+                        onEvent(InterviewListEvent.RefreshData)
+                    }
+                )
+            } else if (uiState.interviewListLoading) {
+                CareerLoadingScreen()
+            } else {
+                InterviewList(
+                    interviewList = uiState.selectSpeciality,
+                    onNavigation = onNavigation
+                )
+            }
+        }
     }
-
-
-
 }
 
 
 @Composable
 fun InterviewList(
-    interviewList : List<Interview>,
-    modifier : Modifier = Modifier,
-    onNavigation : (String, String) -> Unit
+    interviewList: List<Interview>,
+    modifier: Modifier = Modifier,
+    onNavigation: (String, String) -> Unit
 ) {
-
     val listState = rememberLazyListState()
 
     LazyColumn(
         state = listState,
-        modifier = modifier.basisPadding()
+        modifier = modifier,
+        contentPadding = PaddingValues(12.dp)
     ) {
-
         items(
             items = interviewList,
-            key = { interview -> interview.id }
+            key = Interview::id,
         ) { interview ->
-            Log.d("InterviewListId", "${interview.id}")
-
             InterviewItem(
                 level = interview.level,
                 logoCompany = interview.logoCompany,
@@ -114,68 +124,62 @@ fun InterviewList(
                 time = interview.time,
                 title = interview.title,
                 onItemClick = {
-                    onNavigation(interview.id,interview.totalTime)
+                    onNavigation(interview.id, interview.totalTime)
                 }
             )
-
         }
-
     }
-
 }
 
 @Composable
 fun InterviewItem(
-    level : String,
-    logoCompany : String,
-    nameCompany : String,
-    numberTime : Int,
-    time : String,
-    title : String,
-    onItemClick : () -> Unit,
-    modifier : Modifier = Modifier
+    level: String,
+    logoCompany: String,
+    nameCompany: String,
+    numberTime: Int,
+    time: String,
+    title: String,
+    onItemClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-
-
-    Row(
-        modifier
-            .fillMaxWidth()
-            .clickable { onItemClick() }
+    Surface(
+        modifier = modifier
+            .fillMaxWidth(),
+        onClick = onItemClick,
+        shape = MaterialTheme.shapes.medium,
     ) {
-
-        //todo Добавить прелоадер
-        SubcomposeAsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(logoCompany)
-                .crossfade(true)
-                .build(),
-            contentScale = ContentScale.Crop,
-            contentDescription = null,
-            modifier = modifier
-                .size(70.dp)
-                .clip(RoundedCornerShape(5.dp)),
-        )
-
-        Spacer(modifier = modifier.width(27.dp))
-
-        Column {
-
-            Text(
-                text = title,
-                fontSize = 24.sp,
-                color = Black
-            )
-            Text(
-                text = "$numberTime $time • $level • $nameCompany",
-                color = DarkBlue
+        Row(
+            modifier = Modifier
+                .padding(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            SubcomposeAsyncImage(
+                modifier = Modifier
+                    .size(70.dp)
+                    .clip(RoundedCornerShape(5.dp)),
+                model = logoCompany,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                loading = {
+                    ShimmerBrush()
+                }
             )
 
+            Spacer(modifier = Modifier.width(27.dp))
+
+            Column {
+                Text(
+                    text = title,
+                    fontSize = 24.sp,
+                    color = Black,
+                )
+                Text(
+                    text = "$numberTime $time • $level • $nameCompany",
+                    color = DarkBlue,
+                )
+            }
         }
-
-
     }
-
-
 }
 
 @Preview
@@ -190,7 +194,6 @@ private fun InterviewListScreenPrev() {
         time = "minute",
         title = "Android developer",
         onItemClick = { }
-        )
-
+    )
 }
 

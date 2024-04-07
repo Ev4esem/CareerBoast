@@ -9,7 +9,6 @@ import com.example.careerboast.domain.use_cases.mentor.SetFavoriteMentorUseCase
 import com.example.careerboast.utils.CareerBoastViewModel
 import com.example.careerboast.utils.EventHandler
 import com.example.careerboast.utils.collectAsResult
-import com.example.careerboast.view.screens.job.InternshipJob
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,19 +19,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MentorViewModel @Inject constructor(
-    private val getMentorsListUseCase : GetMentorsListUseCase,
-    private val getFavoriteMentorListUseCase : GetFavoriteMentorListUseCase,
-    private val setFavoriteMentorUseCase : SetFavoriteMentorUseCase,
-    logService : LogService
+    private val getMentorsListUseCase: GetMentorsListUseCase,
+    private val getFavoriteMentorListUseCase: GetFavoriteMentorListUseCase,
+    private val setFavoriteMentorUseCase: SetFavoriteMentorUseCase,
+    logService: LogService
 ) : CareerBoastViewModel(logService), EventHandler<MentorEvent> {
 
     private val _uiState = MutableStateFlow(MentorUiState())
-     val uiState = _uiState.asStateFlow()
+    val uiState = _uiState.asStateFlow()
 
 
-    override fun obtainEvent(event : MentorEvent) {
+    override fun obtainEvent(event: MentorEvent) {
 
-        when(event) {
+        when (event) {
 
             MentorEvent.RefreshData -> {
                 getMentors()
@@ -53,16 +52,16 @@ class MentorViewModel @Inject constructor(
         getMentors()
     }
 
-    private fun changeType(tab : InternshipMentor) {
+    private fun changeType(tab: InternshipMentor) {
         if (tab == InternshipMentor.Mentors) {
-            _uiState.update {  currentState ->
+            _uiState.update { currentState ->
                 currentState.copy(
                     tab = tab
                 )
             }
-        } else if(tab == InternshipMentor.Favorite) {
+        } else if (tab == InternshipMentor.Favorite) {
             getMentorsFavorite()
-            _uiState.update {  currentState ->
+            _uiState.update { currentState ->
                 currentState.copy(
                     tab = tab
                 )
@@ -79,7 +78,7 @@ class MentorViewModel @Inject constructor(
                     _uiState.update { currentState ->
                         currentState.copy(
                             favoriteMentors = favoriteMentors,
-                            loading  = false,
+                            loading = false,
                             error = null
                         )
                     }
@@ -112,7 +111,7 @@ class MentorViewModel @Inject constructor(
                     _uiState.update { currentState ->
                         currentState.copy(
                             mentors = jobs,
-                            loading  = false,
+                            loading = false,
                             error = null
                         )
                     }
@@ -144,15 +143,17 @@ class MentorViewModel @Inject constructor(
                 onSuccess = { newValue ->
                     _uiState.update { currentState ->
                         currentState.copy(
-                            mentors = currentState.mentors.toMutableList()
+                            mentors = currentState.mentors
                                 .map { if (it.id == mentor.id) it.copy(favorite = newValue) else it },
+                            favoriteMentors = currentState.favoriteMentors
+                                .asSequence()
+                                .map { if (it.id == mentor.id) it.copy(favorite = newValue) else it }
+                                .filter { it.favorite }
+                                .toList(),
                         )
                     }
                 }
             )
         }
     }
-
-
-
 }

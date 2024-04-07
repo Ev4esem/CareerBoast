@@ -3,16 +3,12 @@ package com.example.careerboast.view.navigation
 import androidx.compose.material3.DrawerState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.example.careerboast.domain.model.interviews.AnswerResult
 import com.example.careerboast.utils.ARTICLE_URL
 import com.example.careerboast.utils.INTERVIEW_ID
 import com.example.careerboast.utils.JOB_ID
-import com.example.careerboast.utils.SPECIALITY_ID
-import com.example.careerboast.utils.ANSWER_STATE
 import com.example.careerboast.utils.MENTOR_ID
+import com.example.careerboast.utils.SPECIALITY_ID
 import com.example.careerboast.utils.TIME_TOTAL
 import com.example.careerboast.view.navigation.routes.FeedbackRoute
 import com.example.careerboast.view.navigation.routes.InterviewListRoute
@@ -27,22 +23,22 @@ import com.example.careerboast.view.navigation.routes.SpecialitiesRoute
 import com.example.careerboast.view.screens.feedback.WebViewContainer
 
 
-fun buildInterviewListRoute(argument : String) = "${Screen.INTERVIEWS_SCREEN.route}/$argument"
+fun buildInterviewListRoute(argument: String) = "${Screen.INTERVIEWS_SCREEN.route}/$argument"
 
-fun buildInterviewRoute(interviewId : String, time : String) =
+fun buildInterviewRoute(interviewId: String, time: String) =
     "${Screen.INTERVIEW_SCREEN.route}/$interviewId/$time"
 
-fun buildJobDetailRoute(argument : String) = "${Screen.DETAILS_JOB_SCREEN.route}/$argument"
+fun buildJobDetailRoute(argument: String) = "${Screen.DETAILS_JOB_SCREEN.route}/$argument"
 
-fun buildMentorDetailRoute(argument : String) = "${Screen.DETAILS_MENTOR_SCREEN.route}/$argument"
+fun buildMentorDetailRoute(argument: String) = "${Screen.DETAILS_MENTOR_SCREEN.route}/$argument"
 
-fun buildWebViewRoute(url : String) = "${Screen.WEB_VIEW_SCREEN.route}/$url"
+fun buildWebViewRoute(url: String) = "${Screen.WEB_VIEW_SCREEN.route}/$url"
 
 
 fun NavGraphBuilder.screens(
-    navController : NavController,
-    appState : CareerBoastAppState,
-    drawerState : DrawerState
+    navController: NavController,
+    appState: CareerBoastAppState,
+    drawerState: DrawerState
 ) {
     composable(
         route = Screen.LOGIN_SCREEN.route
@@ -81,8 +77,8 @@ fun NavGraphBuilder.screens(
     composable(
         route = Screen.WEB_VIEW_SCREEN.route + "/{$ARTICLE_URL}",
     ) { backStackEntry ->
-
         val articleUrl = backStackEntry.arguments?.getString(ARTICLE_URL) ?: ""
+
 
         WebViewContainer(url = articleUrl)
 

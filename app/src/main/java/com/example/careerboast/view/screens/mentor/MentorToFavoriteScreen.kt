@@ -22,10 +22,10 @@ import com.example.careerboast.view.navigation.drawer.AppBar
 
 @Composable
 fun MentorToFavoriteScreen(
-    drawerState : DrawerState,
-    uiState : MentorUiState,
-    onNavigation : (String) -> Unit,
-    onEvent : (MentorEvent) -> Unit
+    drawerState: DrawerState,
+    uiState: MentorUiState,
+    onNavigation: (String) -> Unit,
+    onEvent: (MentorEvent) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -48,8 +48,6 @@ fun MentorToFavoriteScreen(
                 modifier = Modifier.basisPadding()
             )
 
-
-            // TODO: Исправить TabLayout чтоб обновляла сразу
             TabLayoutMentor(
                 uiState = uiState,
                 onEvent = onEvent,
@@ -58,6 +56,4 @@ fun MentorToFavoriteScreen(
 
         }
     }
-
-
 }

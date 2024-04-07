@@ -19,20 +19,20 @@ import javax.inject.Inject
 
 @HiltViewModel
 class JobDetailViewModel @Inject constructor(
-    private val getJobByIdUseCase : GetJobByIdUseCase,
-    savedStateHandle : SavedStateHandle,
-    logService : LogService
+    private val getJobByIdUseCase: GetJobByIdUseCase,
+    savedStateHandle: SavedStateHandle,
+    logService: LogService
 ) : CareerBoastViewModel(logService), EventHandler<JobDetailEvent>, EffectHandler<JobDetailEffect> {
 
     private val _uiState = MutableStateFlow(JobDetailUiState())
     val uiState = _uiState.asStateFlow()
 
-    private val jobId : String = checkNotNull(savedStateHandle[JOB_ID])
+    private val jobId: String = checkNotNull(savedStateHandle[JOB_ID])
 
-    override val effectChannel : Channel<JobDetailEffect> = Channel()
+    override val effectChannel: Channel<JobDetailEffect> = Channel()
 
-    override fun obtainEvent(event : JobDetailEvent) {
-        when(event) {
+    override fun obtainEvent(event: JobDetailEvent) {
+        when (event) {
             JobDetailEvent.RefreshData -> {
                 getJobDetailById(jobId)
             }
@@ -43,7 +43,7 @@ class JobDetailViewModel @Inject constructor(
         getJobDetailById(jobId)
     }
 
-    private fun getJobDetailById(id : String) {
+    private fun getJobDetailById(id: String) {
         viewModelScope.launch {
             getJobByIdUseCase(
                 jobId = id
@@ -74,9 +74,6 @@ class JobDetailViewModel @Inject constructor(
                     }
                 }
             )
-            sendEffect(JobDetailEffect.ShowToast(message = _uiState.value.error.toString()))
         }
     }
-
-
 }

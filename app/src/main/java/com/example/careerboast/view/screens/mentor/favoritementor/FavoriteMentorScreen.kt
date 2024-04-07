@@ -40,12 +40,12 @@ import com.example.careerboast.view.screens.mentor.MentorUiState
 
 @Composable
 fun FavoriteMentorScreen(
-    uiState : MentorUiState,
-    onEvent : (MentorEvent) -> Unit,
-    onNavigation : (String) -> Unit
+    uiState: MentorUiState,
+    onEvent: (MentorEvent) -> Unit,
+    onNavigation: (String) -> Unit
 ) {
 
-    if (! uiState.error.isNullOrBlank()) {
+    if (!uiState.error.isNullOrBlank()) {
         CareerErrorScreen(
             errorText = uiState.error.toString(),
             onClickRetry = {
@@ -68,9 +68,9 @@ fun FavoriteMentorScreen(
 
 @Composable
 fun FavoriteMentorList(
-    mentorList : List<MentorEntity>,
-    onNavigation : (String) -> Unit,
-    onEvent : (MentorEvent) -> Unit
+    mentorList: List<MentorEntity>,
+    onNavigation: (String) -> Unit,
+    onEvent: (MentorEvent) -> Unit
 ) {
 
     LazyColumn(
@@ -99,9 +99,9 @@ fun FavoriteMentorList(
 
 @Composable
 fun MentorItem(
-    mentor : MentorEntity,
-    onNavigation : (String) -> Unit,
-    onClickFavorite : () -> Unit,
+    mentor: MentorEntity,
+    onNavigation: (String) -> Unit,
+    onClickFavorite: () -> Unit,
 ) {
 
     Column(
@@ -263,7 +263,7 @@ fun MentorItem(
                 text = if (!mentor.favorite) {
                     R.string.save
                 } else {
-                   R.string.delete
+                    R.string.delete
                 },
                 modifier = Modifier
                     .width(170.dp)
@@ -276,7 +276,5 @@ fun MentorItem(
             )
 
         }
-
     }
-
 }

@@ -17,6 +17,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
@@ -24,6 +29,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.careerboast.R
@@ -55,14 +62,33 @@ import com.example.careerboast.ui.theme.LavenderElement
 import com.example.careerboast.view.navigation.CareerBoastAppState
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InterviewScreen(
-    uiState : InterviewUiState,
-    appState : CareerBoastAppState,
-    onEvent : (InterviewEvent) -> Unit,
+    uiState: InterviewUiState,
+    appState: CareerBoastAppState,
+    onEvent: (InterviewEvent) -> Unit,
 ) {
 
+    var showDialog by remember { mutableStateOf(false) }
 
+    BackHandler {
+        showDialog = true
+    }
+
+    if (showDialog) {
+        ConfirmationDialog(
+            title = stringResource(id = R.string.exit_with_interview),
+            message = stringResource(id = R.string.question_finished_inter),
+            state = showDialog,
+            onConfirm = {
+                appState.navController.navigateUp()
+            },
+            onDismiss = {
+                showDialog = false
+            }
+        )
+    }
 
     FinishedDialog(
         title = stringResource(R.string.congratulations),
@@ -113,12 +139,18 @@ fun InterviewScreen(
 
             Scaffold(
                 topBar = {
-                    QuizTopAppBar(
-                        questionIndex = uiState.selectQuestion.indexOf(currentQuestion),
-                        totalQuestionsCount = uiState.selectQuestion.size,
-                        minute = uiState.timerData.minutes,
-                        second = uiState.timerData.seconds,
-                        appState = appState
+                    TopAppBar(
+                        title = {},
+                        navigationIcon = {
+                            IconButton(
+                                onClick = { showDialog = true }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
+                                    contentDescription = null,
+                                )
+                            }
+                        }
                     )
                 }
             ) {
@@ -127,6 +159,37 @@ fun InterviewScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.padding(it)
                 ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+
+                        Timer(
+                            minutes = uiState.timerData.minutes,
+                            second = uiState.timerData.seconds,
+                        )
+
+                        val progress =
+                            (uiState.currentQuestionIndex).toFloat() / (uiState.selectQuestion.size - 1)
+
+                        val animatedProgress by animateFloatAsState(
+                            targetValue = progress,
+                            animationSpec = ProgressIndicatorDefaults.ProgressAnimationSpec,
+                            label = ""
+                        )
+
+                        Spacer(modifier = Modifier.smallSpacer())
+
+                        LinearProgressIndicator(
+                            progress = animatedProgress,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp),
+                            strokeCap = StrokeCap.Round,
+                            color = Blue,
+                            trackColor = LavenderElement,
+                        )
+                    }
 
 
                     Spacer(modifier = Modifier.height(50.dp))
@@ -143,8 +206,6 @@ fun InterviewScreen(
                         }
                     )
 
-
-
                     BasicButton(
                         action = {
                             onEvent(
@@ -159,23 +220,19 @@ fun InterviewScreen(
                     )
 
                     Spacer(modifier = Modifier.smallSpacer())
-
-
                 }
             }
-
-
         }
     }
 }
 
 @Composable
 private fun QuizTopAppBar(
-    questionIndex : Int,
-    totalQuestionsCount : Int,
-    minute : Long,
-    second : Long,
-    appState : CareerBoastAppState,
+    questionIndex: Int,
+    totalQuestionsCount: Int,
+    minute: Long,
+    second: Long,
+    appState: CareerBoastAppState,
 ) {
 
     var showDialog by remember { mutableStateOf(false) }
@@ -241,10 +298,9 @@ private fun QuizTopAppBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 20.dp),
-            strokeCap = StrokeCap.Round,
             color = Blue,
-
             trackColor = LavenderElement,
+            strokeCap = StrokeCap.Round,
         )
     }
 }
@@ -252,11 +308,10 @@ private fun QuizTopAppBar(
 
 @Composable
 fun QuestionList(
-    question : Question,
-    selectedAnswerId : Int?,
-    onAnswerSelected : (Int) -> Unit,
+    question: Question,
+    selectedAnswerId: Int?,
+    onAnswerSelected: (Int) -> Unit,
 ) {
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -264,8 +319,9 @@ fun QuestionList(
     ) {
         Text(
             text = question.question,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(vertical = 16.dp)
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(vertical = 16.dp),
+            textAlign = TextAlign.Center,
         )
 
         AnswerList(
@@ -273,16 +329,14 @@ fun QuestionList(
             onAnswerSelected = onAnswerSelected,
             selectedAnswerId = selectedAnswerId
         )
-
     }
-
 }
 
 @Composable
 fun AnswerList(
-    list : List<Answer>,
-    selectedAnswerId : Int?,
-    onAnswerSelected : (Int) -> Unit,
+    list: List<Answer>,
+    selectedAnswerId: Int?,
+    onAnswerSelected: (Int) -> Unit,
 ) {
 
     val listState = rememberLazyListState()
@@ -310,9 +364,9 @@ fun AnswerList(
 
 @Composable
 fun AnswerItem(
-    title : String,
-    selected : Boolean,
-    onOptionSelected : () -> Unit
+    title: String,
+    selected: Boolean,
+    onOptionSelected: () -> Unit
 ) {
 
     Surface(
@@ -370,7 +424,7 @@ fun AnswerItem(
 }
 
 @Composable
-fun Timer(minutes : Long, second : Long) {
+fun Timer(minutes: Long, second: Long) {
 
     Surface(
         color = LavenderElement,

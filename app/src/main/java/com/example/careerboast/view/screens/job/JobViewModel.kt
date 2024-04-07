@@ -21,19 +21,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 class JobViewModel @Inject constructor(
-    private val getJobsListUseCase : GetJobsListUseCase,
-    private val getJobFavoriteListUseCase : GetJobFavoriteListUseCase,
-    private val setFavoriteJobUseCase : SetFavoriteJobUseCase,
-    logService : LogService
+    private val getJobsListUseCase: GetJobsListUseCase,
+    private val getJobFavoriteListUseCase: GetJobFavoriteListUseCase,
+    private val setFavoriteJobUseCase: SetFavoriteJobUseCase,
+    logService: LogService
 ) : CareerBoastViewModel(logService), EventHandler<JobEvent>, EffectHandler<JobEffect> {
 
     private var _jobUiState = MutableStateFlow(JobUiState())
     val jobUiState = _jobUiState.asStateFlow()
 
-    override val effectChannel : Channel<JobEffect> = Channel()
+    override val effectChannel: Channel<JobEffect> = Channel()
 
-    override fun obtainEvent(event : JobEvent) {
-        when(event) {
+    override fun obtainEvent(event: JobEvent) {
+        when (event) {
 
             JobEvent.RefreshData -> {
                 getJobs()
@@ -42,6 +42,7 @@ class JobViewModel @Inject constructor(
             is JobEvent.ChangeFavorite -> {
                 changeFavorite(event.job)
             }
+
             is JobEvent.ChangeTabs -> {
                 changeType(event.tab)
             }
@@ -52,23 +53,23 @@ class JobViewModel @Inject constructor(
     init {
         getJobs()
     }
-    private fun changeType(tab : InternshipJob) {
+
+    private fun changeType(tab: InternshipJob) {
 
         if (tab == InternshipJob.Jobs) {
-            _jobUiState.update {  currentState ->
+            _jobUiState.update { currentState ->
                 currentState.copy(
                     tab = tab
                 )
             }
-        } else if(tab == InternshipJob.Favorite) {
+        } else if (tab == InternshipJob.Favorite) {
             getJobsFavorite()
-            _jobUiState.update {  currentState ->
+            _jobUiState.update { currentState ->
                 currentState.copy(
                     tab = tab
                 )
             }
         }
-
 
     }
 
@@ -81,7 +82,7 @@ class JobViewModel @Inject constructor(
                     _jobUiState.update { currentState ->
                         currentState.copy(
                             favoriteList = jobs,
-                            loadingFavorite  = false,
+                            loadingFavorite = false,
                             errorFavorite = null
                         )
                     }
@@ -114,7 +115,9 @@ class JobViewModel @Inject constructor(
                     _jobUiState.update { currentState ->
                         currentState.copy(
                             favoriteList = currentState.favoriteList
-                                .map { if (it.id == job.id) it.copy(favorite = !it.favorite) else it },
+                                .map { if (it.id == job.id) it.copy(favorite = newValue) else it },
+                            jobs = currentState.jobs
+                                .map { if (it.id == job.id) it.copy(favorite = newValue) else it },
                         )
                     }
                 }
@@ -130,7 +133,7 @@ class JobViewModel @Inject constructor(
                     _jobUiState.update { currentState ->
                         currentState.copy(
                             jobs = jobs,
-                            loading  = false,
+                            loading = false,
                             error = null
                         )
                     }
@@ -142,7 +145,6 @@ class JobViewModel @Inject constructor(
                             error = message
                         )
                     }
-                    sendEffect(JobEffect.ShowToast(message.toString()))
                 },
                 onLoading = {
                     _jobUiState.update { currentState ->

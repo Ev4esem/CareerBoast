@@ -21,9 +21,10 @@ import com.example.careerboast.ui.theme.White
 fun BasicButton(
     @StringRes text: Int,
     modifier: Modifier,
-    colorText : Color = White,
-    colorBackground : Color = Blue,
-    action: () -> Unit) {
+    colorText: Color = White,
+    colorBackground: Color = Blue,
+    action: () -> Unit
+) {
     Button(
         onClick = action,
         modifier = modifier,
@@ -37,27 +38,23 @@ fun BasicButton(
             text = stringResource(text),
             fontSize = 16.sp,
             color = colorText
-            )
+        )
     }
 }
 
 @Composable
 fun BackButtonBasic(
-    onBackClick : () -> Unit,
-    modifier : Modifier = Modifier,
-    icon : Int
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    icon: Int
 ) {
-
     IconButton(
         onClick = { onBackClick() },
         modifier = modifier
     ) {
-
         Icon(
             painter = painterResource(id = icon),
             contentDescription = stringResource(R.string.action_back)
         )
-
     }
-
 }
