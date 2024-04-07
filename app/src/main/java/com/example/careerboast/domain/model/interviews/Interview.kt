@@ -1,8 +1,5 @@
 package com.example.careerboast.domain.model.interviews
 
-import com.google.errorprone.annotations.Keep
-import kotlinx.serialization.Serializable
-
 data class Interview(
     val id : String = "",
     val title : String = "",

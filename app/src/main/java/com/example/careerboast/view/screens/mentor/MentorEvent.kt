@@ -6,8 +6,12 @@ sealed interface MentorEvent {
 
     data object RefreshData : MentorEvent
 
+
     data class ChangeFavorite(
         val mentor : Mentor
     ) : MentorEvent
+
+    data class ChangeTabs(val tab: InternshipMentor): MentorEvent
+
 
 }

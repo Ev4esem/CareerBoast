@@ -135,7 +135,8 @@ fun JobDetailScreen(
                     Button(
 
                         onClick = {
-                            appState.navigate(Screen.WEB_VIEW_SCREEN.route + "/${uiState.jobDetail.url}")
+                           // TODO: Реализовать функционал отображения WebView
+                                  // appState.navigate(Screen.WEB_VIEW_SCREEN.route + "/${uiState.jobDetail.url}")
                         },
                         colors = ButtonDefaults.buttonColors(Blue),
                         shape = MaterialTheme.shapes.small,
@@ -271,10 +272,10 @@ fun FeedbackItem(
     modifier : Modifier = Modifier
 ) {
 
-    Column {
+    Column() {
 
         Row(
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -299,6 +300,10 @@ fun FeedbackItem(
         Text(text = description)
 
     }
+
+    Spacer(modifier = Modifier.height(12.dp))
+
+
 
 }
 

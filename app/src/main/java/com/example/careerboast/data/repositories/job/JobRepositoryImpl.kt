@@ -9,6 +9,7 @@ import com.example.careerboast.domain.repositories.job.JobRepository
 import com.example.careerboast.utils.FAVORITE_JOBS
 import com.example.careerboast.utils.JOBS
 import com.example.careerboast.utils.JOB_DETAIL
+import com.example.careerboast.utils.MENTORS
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -54,11 +55,11 @@ class JobRepositoryImpl @Inject constructor(
 
         when(job.favorite) {
             true -> {
-                deleteJobDocument(job.id)
                 db.collection(JOBS).document(job.id)
                     .update(
                         "favorite" ,  false
                     )
+                deleteJobDocument(job.id)
             }
             false -> {
                 db.collection(FAVORITE_JOBS)

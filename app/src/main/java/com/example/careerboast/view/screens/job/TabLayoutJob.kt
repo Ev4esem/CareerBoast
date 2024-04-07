@@ -1,4 +1,4 @@
-package com.example.careerboast.view.screens.mentor
+package com.example.careerboast.view.screens.job
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
@@ -23,23 +23,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.careerboast.common.TabItemJob
-import com.example.careerboast.common.TabItemMentor
 import com.example.careerboast.common.ext.spacer
 import com.example.careerboast.ui.theme.LightGreyBackground
-import com.example.careerboast.view.screens.job.InternshipJob
-import com.example.careerboast.view.screens.job.JobEvent
-import com.example.careerboast.view.screens.job.JobScreen
-import com.example.careerboast.view.screens.job.JobUiState
 import com.example.careerboast.view.screens.job.favoritejob.FavoriteJobScreen
-import com.example.careerboast.view.screens.mentor.favoritementor.FavoriteMentorScreen
 import kotlinx.coroutines.launch
-
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun TabLayoutMentor(
-    uiState : MentorUiState,
-    onEvent : (MentorEvent) -> Unit,
+fun TabLayoutJob(
+    uiState : JobUiState,
+    onEvent : (JobEvent) -> Unit,
     onNavigation : (String) -> Unit
 ) {
 
@@ -59,13 +52,13 @@ fun TabLayoutMentor(
                 .clip(RoundedCornerShape(10.dp))
         ) {
 
-            TabItemMentor.entries.forEachIndexed { index, currentTab ->
+            TabItemJob.entries.forEachIndexed { index, currentTab ->
                 Tab(
                     selected = index == selectedTabIndex.value,
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(currentTab.ordinal)
-                            onEvent(MentorEvent.ChangeTabs(currentTab.screen))
+                            onEvent(JobEvent.ChangeTabs(currentTab.screen))
                         }
                     },
 
@@ -91,18 +84,18 @@ fun TabLayoutMentor(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.TopCenter
             ) {
-                when (TabItemMentor.entries[selectedTabIndex.value].screen) {
-                    InternshipMentor.Mentors -> {
-                        MentorScreen(
+                when (TabItemJob.entries[selectedTabIndex.value].screen) {
+                    InternshipJob.Jobs -> {
+                        JobScreen(
                             uiState = uiState,
                             onEvent = onEvent,
                             onNavigation = onNavigation
                         )
                     }
 
-                    InternshipMentor.Favorite -> {
+                    InternshipJob.Favorite -> {
 
-                        FavoriteMentorScreen(
+                        FavoriteJobScreen(
                             uiState = uiState,
                             onEvent = onEvent,
                             onNavigation = onNavigation
@@ -113,4 +106,3 @@ fun TabLayoutMentor(
         }
     }
 }
-

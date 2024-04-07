@@ -3,7 +3,6 @@ package com.example.careerboast.view.screens.job
 import androidx.lifecycle.viewModelScope
 import com.example.careerboast.domain.model.jobs.Job
 import com.example.careerboast.domain.repositories.LogService
-import com.example.careerboast.domain.use_cases.job.GetJobByIdUseCase
 import com.example.careerboast.domain.use_cases.job.GetJobFavoriteListUseCase
 import com.example.careerboast.domain.use_cases.job.GetJobsListUseCase
 import com.example.careerboast.domain.use_cases.job.SetFavoriteJobUseCase
@@ -53,17 +52,23 @@ class JobViewModel @Inject constructor(
     init {
         getJobs()
     }
-    private fun changeType(tab : Internship) {
+    private fun changeType(tab : InternshipJob) {
 
-        if (tab == Internship.Favorite) {
+        if (tab == InternshipJob.Jobs) {
+            _jobUiState.update {  currentState ->
+                currentState.copy(
+                    tab = tab
+                )
+            }
+        } else if(tab == InternshipJob.Favorite) {
             getJobsFavorite()
-        } else {
             _jobUiState.update {  currentState ->
                 currentState.copy(
                     tab = tab
                 )
             }
         }
+
 
     }
 
@@ -109,8 +114,7 @@ class JobViewModel @Inject constructor(
                     _jobUiState.update { currentState ->
                         currentState.copy(
                             favoriteList = currentState.favoriteList
-                                // todo !it.isFavorite
-                                .map { if (it.id == job.id) it.copy(favorite = newValue) else it },
+                                .map { if (it.id == job.id) it.copy(favorite = !it.favorite) else it },
                         )
                     }
                 }

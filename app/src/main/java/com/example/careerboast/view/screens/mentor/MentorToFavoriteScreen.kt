@@ -15,44 +15,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.careerboast.R
-import com.example.careerboast.common.TabItem
 import com.example.careerboast.common.ext.basisPadding
 import com.example.careerboast.ui.theme.Black
-import com.example.careerboast.ui.theme.Grey
-import com.example.careerboast.ui.theme.LightGreyBackground
-import com.example.careerboast.ui.theme.White
 import com.example.careerboast.view.navigation.drawer.AppBar
-import com.example.careerboast.view.screens.job.Internship
-import com.example.careerboast.view.screens.mentor.favoritementor.FavoriteMentorUiState
 
 
 @Composable
 fun MentorToFavoriteScreen(
     drawerState : DrawerState,
     uiState : MentorUiState,
-    favoriteUiState : FavoriteMentorUiState,
     onNavigation : (String) -> Unit,
     onEvent : (MentorEvent) -> Unit
 ) {
-    val tabItems = listOf(
-        TabItem(
-            title = R.string.jobs,
-            selected = White,
-            unSelected = LightGreyBackground,
-            textSelected = Black,
-            textUnSelected = Grey,
-            screen = Internship.Favorite
-        ),
-        TabItem(
-            title = R.string.favorite,
-            selected = White,
-            unSelected = LightGreyBackground,
-            textSelected = Black,
-            textUnSelected = Grey,
-            screen = Internship.Jobs
-        )
-    )
-
     Scaffold(
         topBar = {
             AppBar(drawerState = drawerState)
@@ -74,11 +48,11 @@ fun MentorToFavoriteScreen(
                 modifier = Modifier.basisPadding()
             )
 
-            TabLayoutJob(
-                tabItems = tabItems,
+
+            // TODO: Исправить TabLayout чтоб обновляла сразу
+            TabLayoutMentor(
                 uiState = uiState,
                 onEvent = onEvent,
-                favoriteUiState = favoriteUiState,
                 onNavigation = onNavigation
             )
 

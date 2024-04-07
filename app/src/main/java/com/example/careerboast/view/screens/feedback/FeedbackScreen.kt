@@ -1,9 +1,6 @@
 package com.example.careerboast.view.screens.feedback
 
 import android.annotation.SuppressLint
-import android.view.ViewGroup
-import android.webkit.WebView
-import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -37,7 +34,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.careerboast.R
@@ -50,9 +46,6 @@ import com.example.careerboast.ui.theme.Black
 import com.example.careerboast.ui.theme.Blue
 import com.example.careerboast.ui.theme.DarkBlue
 import com.example.careerboast.ui.theme.LavenderElement
-import com.example.careerboast.ui.theme.LavenderElementLight
-import com.example.careerboast.ui.theme.LavenderText
-import com.example.careerboast.utils.SPECIALITY_ID
 import com.example.careerboast.view.navigation.CareerBoastAppState
 import com.example.careerboast.view.navigation.Screen
 import com.example.careerboast.view.navigation.buildWebViewRoute
@@ -232,7 +225,7 @@ fun TopBarFeedback(
         }
 
         LinearProgressIndicator(
-            progress = { progress },
+            progress = progress,
             modifier = Modifier
                 .fillMaxWidth()
                 .basisPadding(),
@@ -240,6 +233,9 @@ fun TopBarFeedback(
             strokeCap = StrokeCap.Round,
             trackColor = LavenderElement,
         )
+
+        Spacer(modifier = Modifier.height(10.dp))
+
 
     }
 
@@ -253,7 +249,8 @@ fun StudyMaterialList(
 ) {
 
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2)
+        columns = GridCells.Fixed(2),
+        modifier = Modifier.basisPadding()
     ) {
         items(
             items = list,
@@ -266,7 +263,8 @@ fun StudyMaterialList(
                 task = item.task,
                 onClick = {
 
-                    appState.navigate(buildWebViewRoute(item.url))
+                    // TODO: Реализовать отображение WebView
+                  //  appState.navigate(buildWebViewRoute(item.url))
 
                 }
             )
@@ -343,15 +341,5 @@ private fun FeedbackScreenPrev() {
 
     val progress = 4.toFloat() / 10.toFloat()
 
-
-    LinearProgressIndicator(
-        progress = { progress },
-        modifier = Modifier
-            .fillMaxWidth()
-            .basisPadding(),
-        color = Blue,
-        strokeCap = StrokeCap.Round,
-        trackColor = LavenderElement.copy(alpha = 0.12f),
-    )
 
 }

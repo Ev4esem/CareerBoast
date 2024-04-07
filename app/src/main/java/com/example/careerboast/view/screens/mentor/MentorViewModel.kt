@@ -3,11 +3,13 @@ package com.example.careerboast.view.screens.mentor
 import androidx.lifecycle.viewModelScope
 import com.example.careerboast.domain.model.mentors.Mentor
 import com.example.careerboast.domain.repositories.LogService
+import com.example.careerboast.domain.use_cases.mentor.GetFavoriteMentorListUseCase
 import com.example.careerboast.domain.use_cases.mentor.GetMentorsListUseCase
 import com.example.careerboast.domain.use_cases.mentor.SetFavoriteMentorUseCase
 import com.example.careerboast.utils.CareerBoastViewModel
 import com.example.careerboast.utils.EventHandler
 import com.example.careerboast.utils.collectAsResult
+import com.example.careerboast.view.screens.job.InternshipJob
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MentorViewModel @Inject constructor(
     private val getMentorsListUseCase : GetMentorsListUseCase,
+    private val getFavoriteMentorListUseCase : GetFavoriteMentorListUseCase,
     private val setFavoriteMentorUseCase : SetFavoriteMentorUseCase,
     logService : LogService
 ) : CareerBoastViewModel(logService), EventHandler<MentorEvent> {
@@ -39,12 +42,66 @@ class MentorViewModel @Inject constructor(
                 changeFavorite(event.mentor)
             }
 
+            is MentorEvent.ChangeTabs -> {
+                changeType(event.tab)
+            }
         }
 
     }
 
     init {
         getMentors()
+    }
+
+    private fun changeType(tab : InternshipMentor) {
+        if (tab == InternshipMentor.Mentors) {
+            _uiState.update {  currentState ->
+                currentState.copy(
+                    tab = tab
+                )
+            }
+        } else if(tab == InternshipMentor.Favorite) {
+            getMentorsFavorite()
+            _uiState.update {  currentState ->
+                currentState.copy(
+                    tab = tab
+                )
+            }
+        }
+
+    }
+
+    private fun getMentorsFavorite() {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            getFavoriteMentorListUseCase().collectAsResult(
+                onSuccess = { favoriteMentors ->
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            favoriteMentors = favoriteMentors,
+                            loading  = false,
+                            error = null
+                        )
+                    }
+                },
+                onError = { ex, message ->
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            loading = false,
+                            error = message
+                        )
+                    }
+                },
+                onLoading = {
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            loading = true,
+                            error = null
+                        )
+                    }
+                }
+            )
+        }
     }
 
     private fun getMentors() {

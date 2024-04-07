@@ -36,10 +36,11 @@ import com.example.careerboast.ui.theme.DarkBlue
 import com.example.careerboast.ui.theme.Grey
 import com.example.careerboast.ui.theme.LavenderElementLight
 import com.example.careerboast.view.screens.mentor.MentorEvent
+import com.example.careerboast.view.screens.mentor.MentorUiState
 
 @Composable
 fun FavoriteMentorScreen(
-    uiState : FavoriteMentorUiState,
+    uiState : MentorUiState,
     onEvent : (MentorEvent) -> Unit,
     onNavigation : (String) -> Unit
 ) {

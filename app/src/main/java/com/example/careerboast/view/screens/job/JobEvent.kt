@@ -10,5 +10,5 @@ sealed interface JobEvent {
         val job : Job
     ) : JobEvent
 
-    data class ChangeTabs(val tab: Internship): JobEvent
+    data class ChangeTabs(val tab: InternshipJob): JobEvent
 }
