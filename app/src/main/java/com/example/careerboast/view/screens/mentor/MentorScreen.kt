@@ -246,13 +246,13 @@ fun MentorItem(
             modifier = Modifier
                 .padding(vertical = 16.dp, horizontal = 10.dp)
                 .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
         ) {
 
             BasicButton(
                 text = R.string.apply,
                 modifier = Modifier
-                    .width(170.dp)
+                    .weight(1f)
                     .height(60.dp),
                 action = { onNavigation(mentor.id) }
             )
@@ -264,7 +264,7 @@ fun MentorItem(
                     R.string.save
                 },
                 modifier = Modifier
-                    .width(170.dp)
+                    .weight(1f)
                     .height(60.dp),
                 colorBackground = LavenderElementLight,
                 colorText = Black,

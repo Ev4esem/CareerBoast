@@ -1,25 +1,18 @@
 package com.example.careerboast.utils
 
-import android.database.sqlite.SQLiteException
-import android.os.NetworkOnMainThreadException
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.gson.JsonParseException
-import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
-import retrofit2.HttpException
 import java.io.IOException
-import java.net.HttpURLConnection
-import java.text.ParseException
 
 sealed class Response<out T> {
 

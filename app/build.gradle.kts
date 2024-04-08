@@ -32,6 +32,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -78,12 +79,6 @@ dependencies {
     implementation(libs.moshi.kotlin)
     kapt(libs.moshi.kotlin.codegen)
 
-    //Retrofit
-    implementation(libs.squareup.retrofit2)
-    implementation(libs.squareup.retrofit2.converter.gson)
-    implementation(libs.code.gson)
-    implementation(libs.squareup.retrofit2.converter.serialization)
-
     // Lifecycle
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -92,7 +87,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
 
     //Hilt
-
     implementation (libs.com.google.dagger.hilt.android)
     kapt (libs.com.google.dagger.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)

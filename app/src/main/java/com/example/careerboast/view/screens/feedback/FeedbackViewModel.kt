@@ -11,12 +11,6 @@ import com.example.careerboast.utils.ANSWER_STATE
 import com.example.careerboast.utils.CareerBoastViewModel
 import com.example.careerboast.utils.EventHandler
 import com.example.careerboast.utils.collectAsResult
-import com.google.common.reflect.TypeToken
-import com.google.gson.Gson
-import com.google.gson.JsonParseException
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -56,8 +50,8 @@ class FeedbackViewModel @Inject constructor(
                 getStudyMaterialList(questionIds)
                 _uiState.update { currentState ->
                     currentState.copy(
-                        correctAnswer = correctAnswerCount ?: 0,
-                        incorrectAnswer = inCorrectAnswerCount ?: 0
+                        correctAnswer = correctAnswerCount,
+                        incorrectAnswer = inCorrectAnswerCount
                     )
                 }
             }
