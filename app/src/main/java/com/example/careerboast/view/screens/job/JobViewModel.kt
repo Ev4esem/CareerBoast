@@ -1,12 +1,11 @@
 package com.example.careerboast.view.screens.job
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.careerboast.domain.model.jobs.Job
-import com.example.careerboast.domain.repositories.LogService
 import com.example.careerboast.domain.use_cases.job.GetJobFavoriteListUseCase
 import com.example.careerboast.domain.use_cases.job.GetJobsListUseCase
 import com.example.careerboast.domain.use_cases.job.SetFavoriteJobUseCase
-import com.example.careerboast.utils.CareerBoastViewModel
 import com.example.careerboast.utils.EffectHandler
 import com.example.careerboast.utils.EventHandler
 import com.example.careerboast.utils.collectAsResult
@@ -24,8 +23,7 @@ class JobViewModel @Inject constructor(
     private val getJobsListUseCase: GetJobsListUseCase,
     private val getJobFavoriteListUseCase: GetJobFavoriteListUseCase,
     private val setFavoriteJobUseCase: SetFavoriteJobUseCase,
-    logService: LogService
-) : CareerBoastViewModel(logService), EventHandler<JobEvent>, EffectHandler<JobEffect> {
+) : ViewModel(), EventHandler<JobEvent>, EffectHandler<JobEffect> {
 
     private var _jobUiState = MutableStateFlow(JobUiState())
     val jobUiState = _jobUiState.asStateFlow()

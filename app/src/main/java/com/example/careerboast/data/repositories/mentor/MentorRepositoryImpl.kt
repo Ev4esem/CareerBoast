@@ -9,9 +9,7 @@ import com.example.careerboast.domain.repositories.mentors.MentorRepository
 import com.example.careerboast.utils.FAVORITE_MENTORS
 import com.example.careerboast.utils.MENTORS
 import com.example.careerboast.utils.MENTOR_DETAIL
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -26,17 +24,13 @@ class MentorRepositoryImpl @Inject constructor(
 ) : MentorRepository {
 
     override suspend fun getMentors() : Flow<List<Mentor>> = flow {
-        val mentors =  db.collection(MENTORS)
-        val querySnapshot : QuerySnapshot = mentors.get().await()
-        val mentor = querySnapshot.toObjects(Mentor::class.java)
-        emit(mentor)
+        val mentors =  db.collection(MENTORS).get().await().toObjects(Mentor::class.java)
+        emit(mentors)
     }.flowOn(ioDispatcher)
 
     override suspend fun getFavoriteMentors() : Flow<List<MentorEntity>> = flow {
-        val mentorsCollection = db.collection(FAVORITE_MENTORS)
-        val querySnapshot : QuerySnapshot = mentorsCollection.get().await()
-        val mentor = querySnapshot.toObjects(MentorEntity::class.java)
-        emit(mentor)
+        val mentorsCollection = db.collection(FAVORITE_MENTORS).get().await().toObjects(MentorEntity::class.java)
+        emit(mentorsCollection)
     }.flowOn(ioDispatcher)
 
 
@@ -44,28 +38,20 @@ class MentorRepositoryImpl @Inject constructor(
         when(mentor.favorite) {
             true -> {
                 deleteJobDocument(mentor.id)
-                db.collection(MENTORS).document(mentor.id)
-                    .update(
-                        "favorite" ,  false
-                    )
+                db.collection(MENTORS).document(mentor.id).update("favorite" ,  false)
             }
             false -> {
-                db.collection(FAVORITE_MENTORS)
-                    .add(mentor.toMentorEntity(true))
-                    .await()
-                db.collection(MENTORS).document(mentor.id)
-                    .update(
-                        "favorite" ,  true
-                    )
+                db.collection(FAVORITE_MENTORS).add(mentor.toMentorEntity(true)).await()
+                db.collection(MENTORS).document(mentor.id).update("favorite" ,  true)
             }
         }
         emit(!mentor.favorite)
     }.flowOn(ioDispatcher)
 
     private suspend fun deleteJobDocument(mentorId : String) {
-        val jobCollection =  db.collection(FAVORITE_MENTORS)
+        db.collection(FAVORITE_MENTORS)
             .whereEqualTo("id", mentorId)
-        jobCollection.get()
+            .get()
             .addOnSuccessListener { querySnapshot ->
                 for (doc in querySnapshot) {
                     doc.reference.delete()
@@ -74,15 +60,9 @@ class MentorRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMentorById(mentorId : String) : Flow<MentorDetail> = flow {
-        val mentors = db
-            .collection(MENTORS)
-            .document(mentorId)
-            .collection(MENTOR_DETAIL)
-            .document(mentorId)
-        val documentSnapshot: DocumentSnapshot = mentors.get().await()
-        val mentorDetail = documentSnapshot.toObject<MentorDetail>()
+        val mentorDetail = db.collection(MENTORS).document(mentorId).collection(MENTOR_DETAIL)
+            .document(mentorId).get().await().toObject<MentorDetail>()
         mentorDetail?.let { emit(it) }
     }.flowOn(ioDispatcher)
-
 
 }

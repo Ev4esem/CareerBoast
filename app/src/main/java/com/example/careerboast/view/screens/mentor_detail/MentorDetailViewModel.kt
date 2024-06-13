@@ -1,10 +1,9 @@
 package com.example.careerboast.view.screens.mentor_detail
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.careerboast.domain.repositories.LogService
 import com.example.careerboast.domain.use_cases.mentor.GetMentorByIdUseCase
-import com.example.careerboast.utils.CareerBoastViewModel
 import com.example.careerboast.utils.EventHandler
 import com.example.careerboast.utils.MENTOR_ID
 import com.example.careerboast.utils.collectAsResult
@@ -19,8 +18,7 @@ import javax.inject.Inject
 class MentorDetailViewModel @Inject constructor(
     private val getMentorByIdUseCase : GetMentorByIdUseCase,
     savedStateHandle : SavedStateHandle,
-    logService : LogService
-) : CareerBoastViewModel(logService), EventHandler<MentorDetailEvent> {
+) : ViewModel(), EventHandler<MentorDetailEvent> {
 
     private val mentorId : String = checkNotNull(savedStateHandle[MENTOR_ID])
 

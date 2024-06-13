@@ -25,12 +25,9 @@ class AccountServiceImpl @Inject constructor (
     override val currentUser : Flow<UserAccount>
         get() = callbackFlow {
             val listener = FirebaseAuth.AuthStateListener { auth ->
-
                 val currentUser = auth.currentUser
                 val userData = if (currentUser != null) {
-                    UserAccount(
-                        currentUser.uid, currentUser.email ?: ""
-                    )
+                    UserAccount(currentUser.uid, currentUser.email ?: "")
                 } else {
                     UserAccount("", "")
                 }
@@ -46,14 +43,11 @@ class AccountServiceImpl @Inject constructor (
     }
 
     override suspend fun signIn(email : String, password : String) : Flow<AuthResult> = flow {
-
         val signInUser = auth.signInWithEmailAndPassword(email, password).await()
         emit(signInUser)
     }
 
-
     override suspend fun signOut() {
         auth.signOut()
     }
-
 }
