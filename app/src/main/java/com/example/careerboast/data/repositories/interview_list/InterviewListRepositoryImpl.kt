@@ -16,14 +16,8 @@ class InterviewListRepositoryImpl @Inject constructor (
     private val db : FirebaseFirestore,
     @IoDispatcher private val ioDispatcher : CoroutineDispatcher
 ) : InterviewListRepository {
-
     override suspend fun getSpecialityById(specialityId : String) : Flow<List<Interview>> = flow {
-
-        val specialityDocument = db.collection(specialityId)
-        val documentSnapshot: QuerySnapshot = specialityDocument.get().await()
-
-        val speciality = documentSnapshot.toObjects(Interview::class.java)
-        emit(speciality)
+        emit(db.collection(specialityId).get().await().toObjects(Interview::class.java))
     }.flowOn(ioDispatcher)
 
 }

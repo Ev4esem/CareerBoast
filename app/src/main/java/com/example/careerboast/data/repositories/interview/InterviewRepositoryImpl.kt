@@ -18,34 +18,20 @@ import javax.inject.Inject
 
 
 class InterviewRepositoryImpl @Inject constructor(
-    private val db : FirebaseFirestore,
-    @IoDispatcher private val ioDispatcher : CoroutineDispatcher
+    private val db: FirebaseFirestore,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : InterviewRepository {
 
-
-    override suspend fun getInterviewById(interviewId : String) : Flow<List<Question>> = flow {
-
-        val interviews = db.collection(interviewId)
-
-        val documentSnapshot : QuerySnapshot = interviews.get().await()
-
-        val interview = documentSnapshot.toObjects(Question::class.java)
-
-        emit(interview)
+    override suspend fun getInterviewById(interviewId: String): Flow<List<Question>> = flow {
+        emit(db.collection(interviewId).get().await().toObjects(Question::class.java))
     }.flowOn(ioDispatcher)
 
-
-
-    override suspend fun getStudyMaterialById(studyMaterialId : String) : Flow<StudyMaterial?> = flow {
-
-            val questions = db.collection(STUDY_MATERIAL).document(studyMaterialId)
-
-            val documentSnapshot : DocumentSnapshot = questions.get().await()
-
-            val studyMaterial = documentSnapshot.toObject<StudyMaterial>()
-            studyMaterial?.let { emit(it) }
-
+    override suspend fun getStudyMaterialById(studyMaterialId: String): Flow<StudyMaterial?> =
+        flow {
+            val questions = db.collection(STUDY_MATERIAL).document(studyMaterialId).get().await()
+                .toObject<StudyMaterial>()
+            questions?.let { emit(it) }
         }.flowOn(ioDispatcher)
-
-
 }
+
+

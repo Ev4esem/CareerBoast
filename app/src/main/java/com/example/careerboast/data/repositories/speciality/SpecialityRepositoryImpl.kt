@@ -20,14 +20,8 @@ class SpecialityRepositoryImpl @Inject constructor(
 ) : SpecialitiesRepository {
 
     override suspend fun getSpecialitiesList() : Flow<List<Speciality>> = flow {
-        val specialitiesCollection = db.collection(SPECIALITIES)
-        val querySnapshot : QuerySnapshot = specialitiesCollection.get().await()
-        val specialities = querySnapshot.toObjects(Speciality::class.java)
-        Log.d("SpecialityId", "$specialities")
-        emit(specialities)
+        val specialitiesCollection = db.collection(SPECIALITIES).get().await().toObjects(Speciality::class.java)
+        emit(specialitiesCollection)
     }.flowOn(ioDispatcher)
-
-
-
 
 }

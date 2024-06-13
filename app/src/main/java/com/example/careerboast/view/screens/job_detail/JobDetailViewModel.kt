@@ -1,10 +1,9 @@
 package com.example.careerboast.view.screens.job_detail
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.careerboast.domain.repositories.LogService
 import com.example.careerboast.domain.use_cases.job.GetJobByIdUseCase
-import com.example.careerboast.utils.CareerBoastViewModel
 import com.example.careerboast.utils.EffectHandler
 import com.example.careerboast.utils.EventHandler
 import com.example.careerboast.utils.JOB_ID
@@ -21,8 +20,7 @@ import javax.inject.Inject
 class JobDetailViewModel @Inject constructor(
     private val getJobByIdUseCase: GetJobByIdUseCase,
     savedStateHandle: SavedStateHandle,
-    logService: LogService
-) : CareerBoastViewModel(logService), EventHandler<JobDetailEvent>, EffectHandler<JobDetailEffect> {
+) : ViewModel(), EventHandler<JobDetailEvent>, EffectHandler<JobDetailEffect> {
 
     private val _uiState = MutableStateFlow(JobDetailUiState())
     val uiState = _uiState.asStateFlow()

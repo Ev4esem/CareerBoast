@@ -2,13 +2,12 @@ package com.example.careerboast.view.screens.feedback
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.careerboast.domain.model.interviews.AnswerResult
 import com.example.careerboast.domain.model.interviews.StudyMaterial
-import com.example.careerboast.domain.repositories.LogService
 import com.example.careerboast.domain.use_cases.interview.GetStudyMaterialByIdUseCase
 import com.example.careerboast.utils.ANSWER_STATE
-import com.example.careerboast.utils.CareerBoastViewModel
 import com.example.careerboast.utils.EventHandler
 import com.example.careerboast.utils.collectAsResult
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,10 +19,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FeedbackViewModel @Inject constructor(
-    private val getStudyMaterialByIdUseCase : GetStudyMaterialByIdUseCase,
-    savedStateHandle : SavedStateHandle,
-    logService : LogService
-) : CareerBoastViewModel(logService), EventHandler<FeedbackEvent> {
+    private val getStudyMaterialByIdUseCase: GetStudyMaterialByIdUseCase,
+    savedStateHandle: SavedStateHandle,
+) : ViewModel(), EventHandler<FeedbackEvent> {
 
     companion object {
         const val TAG = "FeedbackViewModel"
@@ -44,8 +42,8 @@ class FeedbackViewModel @Inject constructor(
         answerResult.count { it.answerState == AnswerResult.AnswerState.Wrong }
 
 
-    override fun obtainEvent(event : FeedbackEvent) {
-        when(event) {
+    override fun obtainEvent(event: FeedbackEvent) {
+        when (event) {
             FeedbackEvent.RefreshData -> {
                 getStudyMaterialList(questionIds)
                 _uiState.update { currentState ->
@@ -70,57 +68,42 @@ class FeedbackViewModel @Inject constructor(
         }
     }
 
-    private fun getStudyMaterialList(questionIds : List<String>?) {
-
+    private fun getStudyMaterialList(questionIds: List<String>?) {
         viewModelScope.launch {
-            Log.d("StudyMaterialList", "$questionIds")
-
+            // TODO: При перевороте экрана список исчезнет
             val studyMaterialList = mutableListOf<StudyMaterial>()
-
             questionIds?.forEach { questionId ->
-
                 getStudyMaterialByIdUseCase(questionId).collectAsResult(
                     onSuccess = { studyMaterial ->
-                        Log.d("StudyMaterial", "$studyMaterial")
                         studyMaterial?.let { studyMaterialList.add(it) }
                         _uiState.update { currentState ->
-
                             currentState.copy(
                                 studyList = studyMaterialList,
                                 loading = false,
                                 error = null
                             )
-
                         }
                     },
                     onError = { ex, message ->
                         _uiState.update { currentState ->
-
                             currentState.copy(
                                 error = message,
                                 loading = false
                             )
-
                         }
                     },
                     onLoading = {
                         _uiState.update { currentState ->
-
                             currentState.copy(
                                 error = null,
                                 loading = true
                             )
-
                         }
                     }
                 )
             }
-
         }
-
     }
-
-
 
 
 }

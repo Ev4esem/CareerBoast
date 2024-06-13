@@ -2,16 +2,14 @@ package com.example.careerboast.view.screens.interview_list
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.careerboast.domain.repositories.LogService
 import com.example.careerboast.domain.use_cases.interview_list.GetSpecialityByIdUseCase
-import com.example.careerboast.utils.CareerBoastViewModel
 import com.example.careerboast.utils.EffectHandler
 import com.example.careerboast.utils.EventHandler
 import com.example.careerboast.utils.SPECIALITY_ID
 import com.example.careerboast.utils.collectAsResult
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,8 +21,7 @@ import javax.inject.Inject
 class InterviewListViewModel @Inject constructor(
     private val getSpecialityByIdUseCase : GetSpecialityByIdUseCase,
     savedStateHandle : SavedStateHandle,
-    logService : LogService
-) : CareerBoastViewModel(logService), EffectHandler<InterviewListEffect>, EventHandler<InterviewListEvent> {
+) : ViewModel(), EffectHandler<InterviewListEffect>, EventHandler<InterviewListEvent> {
 
     private val specialityId : String = checkNotNull(savedStateHandle[SPECIALITY_ID])
 

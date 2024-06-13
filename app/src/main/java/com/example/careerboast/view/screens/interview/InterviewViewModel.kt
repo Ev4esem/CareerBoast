@@ -3,11 +3,10 @@ package com.example.careerboast.view.screens.interview
 import android.os.CountDownTimer
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.careerboast.domain.model.interviews.AnswerResult
-import com.example.careerboast.domain.repositories.LogService
 import com.example.careerboast.domain.use_cases.interview.GetInterviewByIdUseCase
-import com.example.careerboast.utils.CareerBoastViewModel
 import com.example.careerboast.utils.EffectHandler
 import com.example.careerboast.utils.EventHandler
 import com.example.careerboast.utils.INTERVIEW_ID
@@ -26,8 +25,7 @@ import javax.inject.Inject
 class InterviewViewModel @Inject constructor(
     private val getInterviewByIdUseCase : GetInterviewByIdUseCase,
     savedStateHandle : SavedStateHandle,
-    logService : LogService
-) : CareerBoastViewModel(logService), EffectHandler<InterviewEffect>, EventHandler<InterviewEvent> {
+) : ViewModel(), EffectHandler<InterviewEffect>, EventHandler<InterviewEvent> {
 
     private var countDownTimer : CountDownTimer? = null
     private val interviewId : String = checkNotNull(savedStateHandle[INTERVIEW_ID])
